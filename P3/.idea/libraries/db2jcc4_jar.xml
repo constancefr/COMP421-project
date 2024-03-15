@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="db2jcc4.jar">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../P3/db2jcc4.jar.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
