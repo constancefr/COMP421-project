@@ -1,9 +1,10 @@
 <component name="libraryTable">
   <library name="db2jcc4.jar">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../P3/db2jcc4.jar.zip!/" />
+      <root url="file://$PROJECT_DIR$/db2jcc4.jar" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/db2jcc4.jar" recursive="false" />
   </library>
 </component>
