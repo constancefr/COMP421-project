@@ -26,6 +26,7 @@ class simpleJDBC
         //REMEMBER to remove your user id and password before submitting your code!!
         String your_userid = "cfrach";
         String your_password = "BQAEknFZT2W1";
+
         //AS AN ALTERNATIVE, you can just set your password in the shell environment in the Unix (as shown below) and read it from there.
         //$  export SOCSPASSWD=yoursocspasswd
         if(your_userid == null && (your_userid = System.getenv("SOCSUSER")) == null)
@@ -38,12 +39,18 @@ class simpleJDBC
             System.err.println("Error!! do not have a password to connect to the database!");
             System.exit(1);
         }
+
         Connection con = DriverManager.getConnection (url,your_userid,your_password) ;
+
         Statement statement = con.createStatement ( ) ;
 
 
         // TODO
         String userInput = printMenu();
+
+        // TODO: while user input != 6 (loop and print menu again after task complete)
+
+        if (userInput.equals("1")) {
 
         if (userInput.equals("1")) {
             // call method 1
@@ -57,12 +64,11 @@ class simpleJDBC
         // Finally but importantly close the statement and connection
         statement.close ( ) ;
         con.close ( ) ;
+        System.out.println("here now");
     }
 
     public static String printMenu() {
         // TODO: print menu
-
-
         // Parse input and read arguments
         Scanner scan = new Scanner(System.in);
         String userInput = scan.nextLine();
