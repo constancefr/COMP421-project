@@ -24,8 +24,8 @@ class simpleJDBC
         String url = "jdbc:db2://winter2024-comp421.cs.mcgill.ca:50000/comp421";
 
         //REMEMBER to remove your user id and password before submitting your code!!
-        String your_userid = null;
-        String your_password = null;
+        String your_userid = "mcheck";
+        String your_password = "Shell7712345$";
         //AS AN ALTERNATIVE, you can just set your password in the shell environment in the Unix (as shown below) and read it from there.
         //$  export SOCSPASSWD=yoursocspasswd
         if(your_userid == null && (your_userid = System.getenv("SOCSUSER")) == null)
@@ -38,20 +38,18 @@ class simpleJDBC
             System.err.println("Error!! do not have a password to connect to the database!");
             System.exit(1);
         }
+
         Connection con = DriverManager.getConnection (url,your_userid,your_password) ;
+
         Statement statement = con.createStatement ( ) ;
 
 
         // TODO
-        printMenu();
+        String in = printMenu();
 
-        // Parse input and read arguments
-        Scanner scan = new Scanner(System.in);
-        String userInput = scan.nextLine();
-
-        if (userInput.equals("1")) {
+        if (in.equals("1")) {
             // call method 1
-        } else if (userInput.equals("2")) {
+        } else if (in.equals("2")) {
             // etc.
         } else {
             // print error message
@@ -61,9 +59,14 @@ class simpleJDBC
         // Finally but importantly close the statement and connection
         statement.close ( ) ;
         con.close ( ) ;
+        System.out.println("here now");
     }
 
-    public static void printMenu() {
+    public static String printMenu() {
         // TODO
+        // Parse input and read arguments
+        Scanner scan = new Scanner(System.in);
+        String userInput = scan.nextLine();
+        return userInput;
     }
 }
