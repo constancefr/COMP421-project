@@ -77,4 +77,21 @@ public class tasks {
         }
         return cid;
     }
+
+    public static boolean isRoomAvailable(Statement s, String location, String type){
+        String getCountOfAvailRooms = "SELECT COUNT(*) FROM Room r" +
+                "WHERE (r.location = " + location + " AND r.roomType = " + type +
+                ")";
+        int rs = 0;
+        try {
+            rs = s.executeUpdate(getCountOfAvailRooms);
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+        if(rs == 0){
+            return false;
+        }
+        return true;
+    }
+
 }
