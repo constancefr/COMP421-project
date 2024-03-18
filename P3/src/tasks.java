@@ -488,10 +488,12 @@ public class tasks {
                 } catch (SQLException e){
                     e.printStackTrace();
                 }
-
         }
-
     }
 
+
+    public static String getSupport(Connection c, Statement s){
+        return "";
+    }
 
 }
