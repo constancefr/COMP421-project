@@ -180,5 +180,16 @@ public class tasks {
         return true;
     }
 
+    public static void cancelRes(Statement s, int rid){
+        //TODO: implement cancel reservation
+        String deleteRes = "DELETE FROM Reservation" +
+                "WHERE rid = " + rid + "";
+        try{
+            s.executeUpdate(deleteRes);
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
 
 }
