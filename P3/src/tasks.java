@@ -1,53 +1,269 @@
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
+import java.sql.Connection;
 import java.sql.* ;
 
 public class tasks {
 
-    public static int makeReservation(Statement statement) {
+    public static int makeReservation(Connection c, Statement s) {
         Scanner scan = new Scanner(System.in);
 
-        // TODO: generate RID
+        int CID = initializeCustomer(c, s);
 
-        System.out.println("When would you like to arrive? (YYYY-MM-DD)");
-        String startDate = scan.nextLine();
-        System.out.println("When will you be leaving? (YYYY-MM-DD)");
-        String endDate = scan.nextLine();
+        System.out.println("Where would you like to make your reservation?");
+        System.out.println("1) Montreal\n2) Toronto\n3) Vancouver\n4) Ottawa\n5) Halifax\n6) Calgary");
+        String location = scan.nextLine();
+        switch (location) {
+            case "1":
+                location = "Montreal";
+                break;
+            case "2":
+                location = "Toronto";
+                break;
+            case "3":
+                location = "Vancouver";
+                break;
+            case "4":
+                location = "Ottawa";
+                break;
+            case "5":
+                location = "Halifax";
+                break;
+            case "6":
+                location = "Calgary";
+                break;
+            default:
+                System.out.println("Invalid input.");
+        }
+
+        System.out.println("Please enter the start date for your reservation (YYYY-MM-DD)...");
+        String startDate = "'" + scan.nextLine() + "'";
+        System.out.println("...and the end date.");
+        String endDate = "'" + scan.nextLine() + "'";
         System.out.println("How many people will be there?");
         int numPeople = Integer.valueOf(scan.nextLine());
 
-        // TODO: set startDate, endDate, numPeople in DB
+        String addToReservation = "INSERT INTO Reservation" + " (cid, numberOfPeople, startDate, endDate)" + " VALUES (CID, numPeople, startDate, endDate)";
+        System.out.println(addToReservation);
 
-
-        try {
-            String insertSQL = "INSERT INTO " + tableName + " VALUES ( 1 , \'Vicki\' ) ";
-            System.out.println(insertSQL);
-            statement.executeUpdate(insertSQL);
-            System.out.println("DONE");
-
-            insertSQL = "INSERT INTO " + tableName + " VALUES ( 2 , \'Vera\' ) ";
-            System.out.println(insertSQL);
-            statement.executeUpdate(insertSQL);
-            System.out.println("DONE");
-            insertSQL = "INSERT INTO " + tableName + " VALUES ( 3 , \'Franca\' ) ";
-            System.out.println(insertSQL);
-            statement.executeUpdate(insertSQL);
-            System.out.println("DONE");
-
+        // DB2 GENERATES UNIQUE CID AUTOMATICALLY!!
+        int generatedRID = 0;
+        try (PreparedStatement pstmt = c.prepareStatement(addToReservation, PreparedStatement.RETURN_GENERATED_KEYS)){
+            pstmt.executeUpdate(addToReservation);
+            ResultSet generatedKey = pstmt.getGeneratedKeys();
+            generatedRID = generatedKey.getInt(1);
+            System.out.println("New CID generated: " + generatedRID);
         } catch (SQLException e) {
-            sqlCode = e.getErrorCode(); // Get SQLCODE
-            sqlState = e.getSQLState(); // Get SQLSTATE
+//          TODO: handle errors??
+            e.printStackTrace();
+        }
+//        String tableName = "Reservation";
+//        try {
+//            String insertSQL = "INSERT INTO " + tableName + " (cid, numberOfPeople, startDate, endDate)" + " VALUES (CID, numPeople, startDate, endDate)";
+//            System.out.println(insertSQL);
+//            s.executeUpdate(insertSQL);
+//            System.out.println("DONE");
+//        } catch (SQLException e) {
+//            int sqlCode = e.getErrorCode(); // Get SQLCODE
+//            String sqlState = e.getSQLState(); // Get SQLSTATE
+//            // something more meaningful than a print would be good
+//            System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
+//            System.out.println(e);
+//        }
 
-            // Your code to handle errors comes here;
-            // something more meaningful than a print would be good
-            System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
-            System.out.println(e);
+        boolean valid = false;
+        while (!valid) {
+            System.out.println("Please select the type of reservation you would like to make.");
+            System.out.println("1) Room reservation\n2) Event booking\n3) Use amenity");
+            String reservationType = scan.nextLine();
+            switch (reservationType) {
+                case "1":
+                    valid = true;
+                    // TODO: test reserve room
+                    reserveRoom(c, s, location, generatedRID);
+                case "2":
+                    valid = true;
+                    // TODO: test event booking
+                    bookEvent(c, s, startDate, location, generatedRID);
+                case "3":
+                    valid = true;
+                    // TODO: test book amenity
+                    scheduleAmenity(c, s, location, startDate, generatedRID);
+                default:
+                    System.out.println("Invalid input.");
+            }
+        }
+
+        return 0;
+    }
+
+    public static int reserveRoom(Connection c, Statement s, String location, int rid) {
+        Scanner scan = new Scanner(System.in);
+
+        System.out.println("Which type of room would you like?");
+        System.out.println("1) Single\n2) Double\n3) Suite");
+        String roomType = scan.nextLine();
+        switch (roomType) {
+            case "1":
+                roomType = "Single";
+                break;
+            case "2":
+                roomType = "Double";
+                break;
+            case "3":
+                roomType = "Suite";
+                break;
+            default:
+                System.out.println("Invalid input.");
+        }
+
+        // Allocate room number automatically
+        int roomNumber = findAvailableRoom(c, location, roomType);
+        if (roomNumber == 0) {
+            System.out.println("No available " + roomType + " room found.");
+        }
+
+        String addToReserve = "INSERT INTO Reserve" + " (rid, location, roomNumber)" + " VALUES (rid, location, roomNumber)";
+        System.out.println(addToReserve);
+
+        try (PreparedStatement pstmt = c.prepareStatement(addToReserve)) {
+            pstmt.executeUpdate(addToReserve);
+        } catch (SQLException e) {
+//          TODO: handle errors??
+            e.printStackTrace();
         }
         return 0;
     }
 
-    public static int initializeCustomer(Statement statement) {
+    public static int findAvailableRoom(Connection c, String location, String type) {
+        String query = "SELECT * FROM Room WHERE roomAvail = ? AND location = ? AND roomType = ? LIMIT 1";
+
+        // Find first available room matching the required type
+        try (PreparedStatement pstmt = c.prepareStatement(query)) {
+            pstmt.setBoolean(1, true);
+            pstmt.setString(2, location);
+            pstmt.setString(3, type);
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                // Retrieve room details from the ResultSet
+                int roomNumber = rs.getInt("roomNumber");
+                return roomNumber;
+            } else {
+                return 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public static int bookEvent(Connection c, Statement s, String date, String location, int rid) {
+        Scanner scan = new Scanner(System.in);
+
+        System.out.println("What venue?");
+        System.out.println("1) Garden\n2) Ballroom\n3) Rooftop");
+        String venue = scan.nextLine();
+        switch (venue) {
+            case "1":
+                venue = "Garden";
+                break;
+            case "2":
+                venue = "Ballroom";
+                break;
+            case "3":
+                venue = "Rooftop";
+                break;
+            default:
+                System.out.println("Invalid input.");
+        }
+
+        System.out.println("Will it be a catered event? (y/n)");
+        String userInput = scan.nextLine();
+        boolean cateredFlag;
+        switch (userInput) {
+            case "y":
+                cateredFlag = true;
+                break;
+            case "n":
+                cateredFlag = false;
+                break;
+            default:
+                System.out.println("Invalid input.");
+        }
+
+        String addToEvent = "INSERT INTO Event" + " (location, eventDate, venue, cateredFlag, rid)" + " VALUES (location, date, venue, cateredFlag, rid)";
+        System.out.println(addToEvent);
+
+        try (PreparedStatement pstmt = c.prepareStatement(addToEvent)) {
+            pstmt.executeUpdate(addToEvent);
+        } catch (SQLException e) {
+//          TODO: handle errors??
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static int scheduleAmenity(Connection c, Statement s, String date, String location, int rid) {
+        Scanner scan = new Scanner(System.in);
+
+        System.out.println("Which amenity or service would you like to schedule?");
+        System.out.println("1) Spa\n2) Gym\n3) Pool\n4) Movie Room\n5) Bar & Restaurant\n6) Game Room");
+        String amenityType = scan.nextLine();
+        switch (amenityType) {
+            case "1":
+                amenityType = "Spa";
+            case "2":
+                amenityType = "Gym";
+            case "3":
+                amenityType = "Pool";
+            case "4":
+                amenityType = "Movie Room";
+            case "5":
+                amenityType = "Bar & Restaurant";
+            case "6":
+                amenityType = "Game Room";
+            default:
+                System.out.println("Invalid input.");
+        }
+
+        System.out.println("Please enter a time for your reservation (e.g. 18:30:00)");
+        String timeSlot = date + " " + scan.nextLine();
+
+        String query = "SELECT * FROM Amenity WHERE location = ? AND amenityType = ? LIMIT 1";
+
+        // Find first available room matching the required type
+        try (PreparedStatement pstmt = c.prepareStatement(query)) {
+            pstmt.setString(1, location);
+            pstmt.setString(2, amenityType);
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                // Retrieve room details from the ResultSet
+                String amenityName = rs.getString("amenityName");
+                int floorNumber = rs.getInt("floorNumber");
+            } else {
+                System.out.println("This amenity is unavailable in " + location + ".");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        String addToSchedule = "INSERT INTO Schedule" + " (rid, location, timeSlot, floorNumber, amenityName)" + " VALUES (rid, location, timeslot, floorNumber, amenityName)";
+        System.out.println(addToSchedule);
+
+        try (PreparedStatement pstmt = c.prepareStatement(addToSchedule)) {
+            pstmt.executeUpdate(addToSchedule);
+        } catch (SQLException e) {
+//          TODO: handle errors??
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    public static int initializeCustomer(Connection c, Statement s) {
         Scanner scan = new Scanner(System.in);
         boolean valid = false;
         int CID = 0;
@@ -71,11 +287,9 @@ public class tasks {
                 System.out.println("Would you like to become a Rewards Member? Members accumulate points and can redeem them for discounts :) (y/n)");
                 userInput = scan.nextLine();
                 if (userInput.equals("y")) {
-                    // TODO: call function to create new member
-                    CID = 0; // createAccount(true);
+                    CID = createAccount(c, s, true); // create member account
                 } else if (userInput.equals("n")) {
-                    // TODO: call function to create guest
-                    CID = 0; // createAccount(false);
+                    CID = createAccount(c, s, false); // create guest account
                 } else {
                     valid = false;
                 }
@@ -87,18 +301,18 @@ public class tasks {
         return CID;
     }
 
-    public static int createAccount(Statement s, boolean isRewards) {
+    public static int createAccount(Connection c, Statement s, boolean isRewards) {
         //generate cid
-        String countCustomers = "SELECT COUNT(cid) FROM Customer";
-        int rs = 0;
-        try {
-            rs = s.executeUpdate(countCustomers);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        int cid = rs + 1;
+//        String countCustomers = "SELECT COUNT(cid) FROM Customer";
+//        int rs = 0;
+//        try {
+//            rs = s.executeUpdate(countCustomers);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        int cid = rs + 1;
         Scanner scan = new Scanner(System.in);
-        String userInput = scan.nextLine();
+
         //get name
         System.out.print("Input your name: \n");
         String name = scan.nextLine();
@@ -113,11 +327,15 @@ public class tasks {
         String address = scan.nextLine();
         //get ccnum
         System.out.print("Input your credit card number: \n");
-        Integer cc_num = Integer.parseInt(scan.nextLine());
-        int ccnum = (int) cc_num;
+        int ccnum = Integer.valueOf(scan.nextLine());
+//        Integer cc_num = Integer.parseInt(scan.nextLine());
+//        int ccnum = (int) cc_num;
         //get ccexpdate
-        System.out.print("Input your credit card expiration date: \n");
-        Date ccexpdate = Date.valueOf(scan.nextLine());
+        System.out.println("Input your credit card expiration date (YYYY-MM-DD):");
+        String ccexpdate = "'" + scan.nextLine() + "'"; // reformatted so it fits DB2's DATE format
+//        System.out.print("Input your credit card expiration date: \n");
+//        Date ccexpdate = Date.valueOf(scan.nextLine());
+
         String username = "";
         String pwd = "";
         int points = 0;
@@ -133,19 +351,38 @@ public class tasks {
         }
 
         //execute SQL statement that inserts this new user into the Customer table and RewardsMember table
-        //Customer: cid, name, address, ccnum, ccexp
-        String addToCustomer = "INSERT INTO Customer" +
-                "VALUES (" + cid + ", " + name + ", " + phoneNumber + ", " + address + ", " +
-                ccnum + ", " + ccexpdate + ")";
-        try {
-            s.executeUpdate(addToCustomer);
+        //Customer: cid, name, email, phone_number, address, ccnum, ccexp
+
+        String addToCustomer = "INSERT INTO Customer" + " (name, email, phone_number, address, ccnum, ccexpdate)" + " VALUES (name, email, phoneNumber, address, ccnum, ccexp)";
+        System.out.println(addToCustomer);
+//        String addToCustomer = "INSERT INTO Customer" +
+//                "VALUES (" + cid + ", " + name + ", " + phoneNumber + ", " + address + ", " +
+//                ccnum + ", " + ccexpdate + ")";
+
+        // DB2 GENERATES UNIQUE CID AUTOMATICALLY!!
+        int generatedCID = 0;
+        try (PreparedStatement pstmt = c.prepareStatement(addToCustomer, PreparedStatement.RETURN_GENERATED_KEYS)){
+            pstmt.executeUpdate(addToCustomer);
+            ResultSet generatedKey = pstmt.getGeneratedKeys();
+            generatedCID = generatedKey.getInt(1);
+            System.out.println("New CID generated: " + generatedCID);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+//        try {
+//            s.executeUpdate(addToCustomer);
+//            System.out.println("DONE");
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+
+
         //RewardsMembers: cid, login, pwd, points
         if (isRewards) {
-            String addToRewards = "INSERT INTO RewardsMember " +
-                    "VALUES (" + cid + ", " + username + ", " + pwd + ", " + points + ")";
+            String addToRewards = "INSERT INTO RewardsMember" + " (cid, login, pwd, points)" + " VALUES ()";
+            System.out.println(addToRewards);
+//            String addToRewards = "INSERT INTO RewardsMember " +
+//                    "VALUES (" + cid + ", " + username + ", " + pwd + ", " + points + ")";
             try {
                 s.executeUpdate(addToRewards);
             } catch (SQLException e) {
@@ -153,14 +390,14 @@ public class tasks {
             }
         } else {
             String addToGuest = "INSERT INTO Guest " +
-                    "VALUES (" + cid + ")";
+                    "VALUES (" + generatedCID + ")";
             try {
                 s.executeUpdate(addToGuest);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
-        return cid;
+        return generatedCID;
     }
 
 }
