@@ -420,6 +420,7 @@ public class tasks {
     public static void cancelRes(Connection c, Statement s){
        //Scanner to get rid from the user
         Scanner sc = new Scanner(System.in);
+        System.out.println("Please input the rid of the reservation you would like to cancel: ");
         Integer i = Integer.parseInt(sc.nextLine());
         int rid = (int)i;
 
@@ -493,6 +494,45 @@ public class tasks {
 
 
     public static String getSupport(Connection c, Statement s){
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Please enter the location of the hotel you would like to contact:\n" +
+                "1: Montreal\n" +
+                "2: Ottawa\n" +
+                "3: Toronto\n" +
+                "4: Halifax\n" +
+                "5: Calgary\n" +
+                "6: Vancouver");
+        String hotelLocation = scan.nextLine();
+        String loc = "";
+        switch (hotelLocation){
+            case "1":
+                loc = "Montreal";
+            case "2":
+                loc = "Ottawa";
+            case "3":
+                loc = "Toronto";
+            case "4":
+                loc = "Halifax";
+            case "5":
+                loc = "Calgary";
+            case "6":
+                loc = "Vancouver";
+        }
+
+        String query = "SELECT * FROM Employee WHERE (location = ? AND department = ?";
+        try(PreparedStatement pstmt = c.prepareStatement(query)) {
+            pstmt.setString(1, loc);
+            pstmt.setString(2, "Front Desk");
+
+            ResultSet rs = pstmt.executeQuery();
+            if(rs.next()){
+                //retrieve phone number of first front desk employee
+                String phoneNumber = rs.getString("phone_number");
+                return phoneNumber;
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
         return "";
     }
 
