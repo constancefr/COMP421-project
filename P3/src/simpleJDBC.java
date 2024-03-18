@@ -41,41 +41,69 @@ class simpleJDBC {
         }
 
         Connection con = DriverManager.getConnection(url, your_userid, your_password);
-
         Statement statement = con.createStatement();
 
 
         // TODO
-        String userInput = printMenu();
+        Scanner scan = new Scanner(System.in);
+        System.out.println(
+            "Hello and welcome to The Queen! Get ready for a data-driven delight in hospitality where SQL queries " +
+            "are as smooth as our freshly fluffed pillows. Your comfort is our primary key, and your satisfaction is " +
+            "our indexed priority. Enjoy a stay where even the nerdiest get a warm, relational welcome!\n");
+        int userInput = 0;
+        while (userInput != 6) { // loop until user quits.
+            userInput = menuPrompt();
 
-        // TODO: while user input != 6 (loop and print menu again after task complete)
+            switch (userInput) {
+                case 1: // make reservation
+                    tasks.makeReservation(con, statement);
+                    System.out.println("Your reservation was made. See you soon!");
+                case 2: // cancel reservation
 
-        if (userInput.equals("1")) {
+                case 3: // check room availability
+                    int availableCount = tasks.availableRooms(statement);
+                    if (availableCount == 0) {
+                        System.out.println("There are no rooms of this type available.");
+                    } else {
+                        System.out.println("There are " + availableCount + " rooms available.");
+                    }
+                case 4: // get customer support
 
-            if (userInput.equals("1")) {
-                // call method 1
-            } else if (userInput.equals("2")) {
-                // etc.
-            } else {
-                // print error message
-                // reprint menu
+                case 5: // create rewards member account
+                    int cid = tasks.createAccount(con, statement, true);
+                    System.out.println("Your account was created. Here is you unique Rewards Member ID: " + cid);
+                case 6: // quit
+                    System.out.println("Thank you for staying at The Queen. Your satisfaction is our primary key, " +
+                            "so please rate your experience with us today!\n");
+                    System.out.println("* | ** | *** | **** | *****");
+                    String userRating = scan.nextLine();
+                    if (userRating.equals("*****")) {
+                        System.out.println("Splendid, we hope to see you soon!");
+                    } else {
+                        System.out.println("Bye!");
+                    }
             }
-
-            // Finally but importantly close the statement and connection
-            statement.close();
-            con.close();
-            System.out.println("here now");
         }
+
+        // Close the statement and connection
+        statement.close();
+        con.close();
     }
 
-    public static String printMenu() {
-        // TODO: print menu
-        // Parse input and read arguments
+    public static int menuPrompt() {
         Scanner scan = new Scanner(System.in);
-        String option = scan.nextLine();
+        int userInput = 0;
+        String menu = "Please select an option to start:\n"
+                + "1) Make a reservation for a room, event or amenity\n"
+                + "2) Cancel a reservation\n"
+                + "3) Check the availability of a certain room type\n"
+                + "4) Redeem your points for a stay\n"
+                + "5) Create a rewards member\n"
+                + "6) Quit\n";
+        System.out.println(menu);
+        userInput = Integer.parseInt(scan.nextLine());
 
-        System.out.println(option);
-        return option;
+        return userInput;
     }
 
 }

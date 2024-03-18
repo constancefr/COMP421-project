@@ -401,21 +401,64 @@ public class tasks {
     }
 
 
-    public static boolean isRoomAvailable(Statement s, String location, String type){
+    public static int availableRooms(Statement s){ // , String location, String type
+        Scanner scan = new Scanner(System.in);
+
+        System.out.print("Enter a hotel location.");
+        System.out.println("1) Montreal\n2) Toronto\n3) Vancouver\n4) Ottawa\n5) Halifax\n6) Calgary");
+        String location = scan.nextLine();
+        switch (location) {
+            case "1":
+                location = "Montreal";
+                break;
+            case "2":
+                location = "Toronto";
+                break;
+            case "3":
+                location = "Vancouver";
+                break;
+            case "4":
+                location = "Ottawa";
+                break;
+            case "5":
+                location = "Halifax";
+                break;
+            case "6":
+                location = "Calgary";
+                break;
+            default:
+                System.out.println("Invalid input.");
+        }
+
+        System.out.println("Select a room type.");
+        System.out.println("1) Single\n2) Double\n3) Suite");
+        String roomType = scan.nextLine();
+        switch (roomType) {
+            case "1":
+                roomType = "Single";
+                break;
+            case "2":
+                roomType = "Double";
+                break;
+            case "3":
+                roomType = "Suite";
+                break;
+            default:
+                System.out.println("Invalid input.");
+        }
+
         String getCountOfAvailRooms = "SELECT COUNT(*) FROM Room r" +
-                "WHERE (r.location = " + location + " AND r.roomType = " + type +
+                "WHERE (r.location = " + location + " AND r.roomType = " + roomType +
                 ")";
+
         int rs = 0;
         try {
             rs = s.executeUpdate(getCountOfAvailRooms);
-        } catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        if(rs == 0){
-            return false;
-        }
-        return true;
-    }
 
+        return rs;
+    }
 
 }
