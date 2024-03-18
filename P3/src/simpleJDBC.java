@@ -24,8 +24,9 @@ class simpleJDBC
         String url = "jdbc:db2://winter2024-comp421.cs.mcgill.ca:50000/comp421";
 
         //REMEMBER to remove your user id and password before submitting your code!!
-        String your_userid = "mcheck";
-        String your_password = "Shell7712345$";
+        String your_userid = "cfrach";
+        String your_password = "BQAEknFZT2W1";
+
         //AS AN ALTERNATIVE, you can just set your password in the shell environment in the Unix (as shown below) and read it from there.
         //$  export SOCSPASSWD=yoursocspasswd
         if(your_userid == null && (your_userid = System.getenv("SOCSUSER")) == null)
@@ -45,11 +46,15 @@ class simpleJDBC
 
 
         // TODO
-        String in = printMenu();
+        String userInput = printMenu();
 
-        if (in.equals("1")) {
+        // TODO: while user input != 6 (loop and print menu again after task complete)
+
+        if (userInput.equals("1")) {
+
+        if (userInput.equals("1")) {
             // call method 1
-        } else if (in.equals("2")) {
+        } else if (userInput.equals("2")) {
             // etc.
         } else {
             // print error message
@@ -63,10 +68,12 @@ class simpleJDBC
     }
 
     public static String printMenu() {
-        // TODO
+        // TODO: print menu
         // Parse input and read arguments
         Scanner scan = new Scanner(System.in);
         String userInput = scan.nextLine();
+
+        System.out.println(userInput);
         return userInput;
     }
 }
