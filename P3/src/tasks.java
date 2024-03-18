@@ -401,7 +401,7 @@ public class tasks {
     }
 
 
-    public static boolean isRoomAvailable(Statement s, String location, String type){
+    public static boolean isRoomAvailable(Connection c, Statement s, String location, String type){
         String getCountOfAvailRooms = "SELECT COUNT(*) FROM Room r" +
                 "WHERE (r.location = " + location + " AND r.roomType = " + type +
                 ")";
@@ -417,8 +417,13 @@ public class tasks {
         return true;
     }
 
-    public static void cancelRes(Statement s, int rid){
-        //TODO: implement cancel reservation
+    public static void cancelRes(Connection c, Statement s){
+       //Scanner to get rid from the user
+        Scanner sc = new Scanner(System.in);
+        Integer i = Integer.parseInt(sc.nextLine());
+        int rid = (int)i;
+
+        //delete rid from reservation table
         String deleteRes = "DELETE FROM Reservation" +
                 "WHERE rid = " + rid + "";
         try{
@@ -426,6 +431,66 @@ public class tasks {
         } catch (SQLException e){
             e.printStackTrace();
         }
+
+        int whichRelation = 0;
+        //scan tables to see if it is a room, amenity, or event
+        String roomDeleteQuery = "SELECT * FROM Reserve WHERE rid = ?";
+        try(PreparedStatement pstmt1 = c.prepareStatement(roomDeleteQuery)) {
+            pstmt1.setInt(1, rid);
+            ResultSet rs = pstmt1.executeQuery();
+            if(rs.next()){
+                whichRelation = 1;
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        String amenityDeleteQuery = "SELECT * FROM Schedule WHERE rid = ?";
+        try(PreparedStatement pstmt2 = c.prepareStatement(amenityDeleteQuery)) {
+            pstmt2.setInt(1, rid);
+            ResultSet rs = pstmt2.executeQuery();
+            if(rs.next()){
+                whichRelation = 2;
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        String eventDeleteQuery = "SELECT * FROM Event WHERE rid = ?";
+        try(PreparedStatement pstmt3 = c.prepareStatement(eventDeleteQuery)) {
+            pstmt3.setInt(1, rid);
+            ResultSet rs = pstmt3.executeQuery();
+            if(rs.next()){
+                whichRelation = 3;
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        String deleteBooking = "DELETE FROM ? WHERE rid = " + rid +"";
+        switch (whichRelation) {
+            case 1:
+                try(PreparedStatement delstmt1 = c.prepareStatement(deleteBooking)) {
+                    delstmt1.setString(1, "Reserve");
+                    delstmt1.executeUpdate();
+                } catch (SQLException e){
+                    e.printStackTrace();
+                }
+            case 2:
+                try(PreparedStatement delstmt2 = c.prepareStatement(deleteBooking)) {
+                    delstmt2.setString(1, "Schedule");
+                    delstmt2.executeUpdate();
+                } catch (SQLException e){
+                    e.printStackTrace();
+                }
+            case 3:
+                try(PreparedStatement delstmt3 = c.prepareStatement(deleteBooking)) {
+                    delstmt3.setString(1, "Event");
+                    delstmt3.executeUpdate();
+                } catch (SQLException e){
+                    e.printStackTrace();
+                }
+
+        }
+
     }
 
 
