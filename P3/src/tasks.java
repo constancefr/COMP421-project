@@ -315,45 +315,45 @@ public class tasks {
 
         //get name
         System.out.print("Input your name: \n");
-        String name = scan.nextLine();
+        String name1 = scan.nextLine();
         //get email
         System.out.print("Input your email: \n");
-        String email = scan.nextLine();
+        String email1 = scan.nextLine();
         //get phone number
         System.out.print("Input your phone number: \n");
-        String phoneNumber = scan.nextLine();
+        String phoneNumber1 = scan.nextLine();
         //get address
         System.out.print("Input your address: \n");
-        String address = scan.nextLine();
+        String address1 = scan.nextLine();
         //get ccnum
         System.out.print("Input your credit card number: \n");
-        String ccnum = scan.nextLine();
+        String ccnum1 = scan.nextLine();
 //        Integer cc_num = Integer.parseInt(scan.nextLine());
 //        int ccnum = (int) cc_num;
         //get ccexpdate
         System.out.println("Input your credit card expiration date (YYYY-MM-DD):");
-        String ccexpdate = "'" + scan.nextLine() + "'"; // reformatted so it fits DB2's DATE format
+        String ccexpdate1 = "'" + scan.nextLine() + "'"; // reformatted so it fits DB2's DATE format
 //        System.out.print("Input your credit card expiration date: \n");
 //        Date ccexpdate = Date.valueOf(scan.nextLine());
 
-        String username = "";
-        String pwd = "";
-        int points = 0;
+        String username1 = "";
+        String pwd1 = "";
+        int points1 = 0;
         if (isRewards) {
             //get login
             System.out.print("Input your login username: \n");
-            username = scan.nextLine();
+            username1 = scan.nextLine();
             //get pwd
             System.out.print("Input your login password: \n");
-            pwd = scan.nextLine();
+            pwd1 = scan.nextLine();
             //initialize points
-            points = 0;
+            points1 = 0;
         }
 
         //execute SQL statement that inserts this new user into the Customer table and RewardsMember table
         //Customer: cid, name, email, phone_number, address, ccnum, ccexp
 
-        String addToCustomer = "INSERT INTO Customer" + " (name, email, phone_number, address, ccnum, ccexpdate)" + " VALUES (name, email, phoneNumber, address, ccnum, ccexp)";
+        String addToCustomer = "INSERT INTO Customer" + " (name, email, phone_number, address, ccnum, ccexpdate)" + " VALUES (name1, email1, phoneNumber1, address1, ccnum1, ccexpdate1)";
         System.out.println(addToCustomer);
 //        String addToCustomer = "INSERT INTO Customer" +
 //                "VALUES (" + cid + ", " + name + ", " + phoneNumber + ", " + address + ", " +
@@ -379,7 +379,7 @@ public class tasks {
 
         //RewardsMembers: cid, login, pwd, points
         if (isRewards) {
-            String addToRewards = "INSERT INTO RewardsMember" + " (cid, login, pwd, points)" + " VALUES ()";
+            String addToRewards = "INSERT INTO RewardsMember" + " (cid, login, pwd, points)" + " VALUES (generatedCID, username1, pwd1, points1)";
             System.out.println(addToRewards);
 //            String addToRewards = "INSERT INTO RewardsMember " +
 //                    "VALUES (" + cid + ", " + username + ", " + pwd + ", " + points + ")";
@@ -389,8 +389,10 @@ public class tasks {
                 e.printStackTrace();
             }
         } else {
+            /*String addToGuest = "INSERT INTO Guest " +
+                    "VALUES (" + generatedCID + ")";*/
             String addToGuest = "INSERT INTO Guest " +
-                    "VALUES (" + generatedCID + ")";
+                    "VALUES (generatedCID)";
             try {
                 s.executeUpdate(addToGuest);
             } catch (SQLException e) {
@@ -466,11 +468,11 @@ public class tasks {
         Scanner sc = new Scanner(System.in);
         System.out.println("Please input the rid of the reservation you would like to cancel: ");
         Integer i = Integer.parseInt(sc.nextLine());
-        int rid = (int) i;
+        int rid1 = (int) i;
 
         //delete rid from reservation table
         String deleteRes = "DELETE FROM Reservation" +
-                "WHERE rid = " + rid + "";
+                "WHERE rid = " + rid1 + "";
         try {
             s.executeUpdate(deleteRes);
         } catch (SQLException e) {
@@ -481,7 +483,7 @@ public class tasks {
         //scan tables to see if it is a room, amenity, or event
         String roomDeleteQuery = "SELECT * FROM Reserve WHERE rid = ?";
         try (PreparedStatement pstmt1 = c.prepareStatement(roomDeleteQuery)) {
-            pstmt1.setInt(1, rid);
+            pstmt1.setInt(1, rid1);
             ResultSet rs = pstmt1.executeQuery();
             if (rs.next()) {
                 whichRelation = 1;
@@ -491,7 +493,7 @@ public class tasks {
         }
         String amenityDeleteQuery = "SELECT * FROM Schedule WHERE rid = ?";
         try (PreparedStatement pstmt2 = c.prepareStatement(amenityDeleteQuery)) {
-            pstmt2.setInt(1, rid);
+            pstmt2.setInt(1, rid1);
             ResultSet rs = pstmt2.executeQuery();
             if (rs.next()) {
                 whichRelation = 2;
@@ -501,7 +503,7 @@ public class tasks {
         }
         String eventDeleteQuery = "SELECT * FROM Event WHERE rid = ?";
         try (PreparedStatement pstmt3 = c.prepareStatement(eventDeleteQuery)) {
-            pstmt3.setInt(1, rid);
+            pstmt3.setInt(1, rid1);
             ResultSet rs = pstmt3.executeQuery();
             if (rs.next()) {
                 whichRelation = 3;
@@ -510,7 +512,7 @@ public class tasks {
             e.printStackTrace();
         }
 
-        String deleteBooking = "DELETE FROM ? WHERE rid = " + rid + "";
+        String deleteBooking = "DELETE FROM ? WHERE rid = " + rid1 + "";
         switch (whichRelation) {
             case 1:
                 try (PreparedStatement delstmt1 = c.prepareStatement(deleteBooking)) {
