@@ -459,12 +459,15 @@ public class tasks {
                 System.out.println("Invalid input.");
 
                 String getCountOfAvailRooms = "SELECT COUNT(*) FROM Room r" +
-                        "WHERE (r.location = " + location1 + " AND r.roomType = " + roomType1 +
-                        ")";
+                        "WHERE (r.location = ? AND r.roomType = ?)";
 
                 try (PreparedStatement pstmt = c.prepareStatement(getCountOfAvailRooms)) {
+                    pstmt.setString(1, location1);
+                    pstmt.setString(2, roomType1);
                     ResultSet rs = pstmt.executeQuery();
-                    roomCount = rs.getInt(1);
+                    if(rs.next()){
+                        roomCount = rs.getInt(1);
+                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -482,8 +485,9 @@ public class tasks {
 
         //delete rid from reservation table
         String deleteRes = "DELETE FROM Reservation" +
-                "WHERE rid = " + rid1 + "";
+                "WHERE rid = ?";
         try (PreparedStatement pstmt = c.prepareStatement(deleteRes)) {
+            pstmt.setInt(1, rid1);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -522,29 +526,38 @@ public class tasks {
             e.printStackTrace();
         }
 
-        String deleteBooking = "DELETE FROM ? WHERE rid = " + rid1 + "";
+        String deleteBooking = "DELETE FROM ? WHERE rid = ?";
         switch (whichRelation) {
             case 1:
                 try (PreparedStatement delstmt1 = c.prepareStatement(deleteBooking)) {
                     delstmt1.setString(1, "Reserve");
+                    delstmt1.setInt(2, rid1);
                     delstmt1.executeUpdate();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+                break;
             case 2:
                 try (PreparedStatement delstmt2 = c.prepareStatement(deleteBooking)) {
                     delstmt2.setString(1, "Schedule");
+                    delstmt2.setInt(2, rid1);
                     delstmt2.executeUpdate();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+                break;
             case 3:
                 try (PreparedStatement delstmt3 = c.prepareStatement(deleteBooking)) {
                     delstmt3.setString(1, "Event");
+                    delstmt3.setInt(2, rid1);
                     delstmt3.executeUpdate();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+                break;
+            default:
+                System.out.println("Invalid input");
+                break;
         }
     }
 
@@ -582,9 +595,13 @@ public class tasks {
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 //retrieve phone number of first front desk employee
-                String phoneNumber = rs.getString("phone_number");
-                String employeeName = rs.getString("name");
-                System.out.println(""+ employeeName + ": "+ phoneNumber);
+                //String phoneNumber = rs.getString("phone_number");
+                //String employeeName = rs.getString("name");
+                for(int i = 1; i <= 2; i++){
+                    //1: prints employee name
+                    //2: prints employee phone number
+                    System.out.println(rs.getString(i));
+                }
                 //return phoneNumber;
             }
         } catch (SQLException e) {
