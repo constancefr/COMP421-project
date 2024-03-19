@@ -16,9 +16,8 @@ class simpleJDBC {
         String url = "jdbc:db2://winter2024-comp421.cs.mcgill.ca:50000/comp421";
 
         // TODO REMEMBER to remove your user id and password before submitting your code!!
-        String your_userid = "mcheck";
-        String your_password = "Shell7712345$";
-
+        String your_userid = "cfrach";
+        String your_password = "BQAEknFZT2W1";
 
         if (your_userid == null && (your_userid = System.getenv("SOCSUSER")) == null) {
             System.err.println("Error!! do not have a password to connect to the database!");
@@ -36,8 +35,8 @@ class simpleJDBC {
         // TODO
         Scanner scan = new Scanner(System.in);
         System.out.println(
-            "\nHello and welcome to The Queen!\nGet ready for a data-driven delight in hospitality where SQL queries " +
-            "are as smooth as our freshly fluffed pillows.\n");
+                "\nHello and welcome to The Queen!\nGet ready for a data-driven delight in hospitality where SQL queries " +
+                        "are as smooth as our freshly fluffed pillows.\n");
         int userInput = 0;
         while (userInput != 6) { // loop until user quits.
             userInput = menuPrompt();

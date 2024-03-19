@@ -536,8 +536,6 @@ public class tasks {
         }
     }
 
-
-
     public static String getSupport (Connection c, Statement s){
         Scanner scan = new Scanner(System.in);
         System.out.println("Please enter the location of the hotel you would like to contact:\n" +
