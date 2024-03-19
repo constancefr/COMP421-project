@@ -26,8 +26,8 @@ class simpleJDBC {
         String url = "jdbc:db2://winter2024-comp421.cs.mcgill.ca:50000/comp421";
 
         //REMEMBER to remove your user id and password before submitting your code!!
-        String your_userid = "cfrach";
-        String your_password = "BQAEknFZT2W1";
+        String your_userid = "mcheck";
+        String your_password = "Shell7712345$";
 
         //AS AN ALTERNATIVE, you can just set your password in the shell environment in the Unix (as shown below) and read it from there.
         //$  export SOCSPASSWD=yoursocspasswd
