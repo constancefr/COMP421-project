@@ -60,8 +60,8 @@ class simpleJDBC {
                     }
                     break;
                 case 4:
-                    String phoneNum = tasks.getSupport(con, statement);
-                    System.out.println("Here is the phone number of an available front desk assistant: " + phoneNum);
+                   // String phoneNum = tasks.getSupport(con, statement);
+                    //System.out.println("Here is the phone number of an available front desk assistant: " + phoneNum);
                     break;
                 case 5: // create rewards member account
                     int cid = tasks.createAccount(con, statement, true);

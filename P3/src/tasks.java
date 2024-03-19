@@ -361,8 +361,8 @@ public class tasks {
         //execute SQL statement that inserts this new user into the Customer table and RewardsMember table
         //Customer: cid, name, email, phone_number, address, ccnum, ccexp
 
-      //  String addToCustomer = "INSERT INTO Customer" + " (name, email, phone_number, address, ccnum, ccexpdate)" + " VALUES (name1, email1, phoneNumber1, address1, ccnum1, ccexpdate1)";
-       // System.out.println(addToCustomer);
+        //  String addToCustomer = "INSERT INTO Customer" + " (name, email, phone_number, address, ccnum, ccexpdate)" + " VALUES (name1, email1, phoneNumber1, address1, ccnum1, ccexpdate1)";
+        // System.out.println(addToCustomer);
         String addToCustomer = "INSERT INTO Customer" + " (name, email, phone_number, address, ccnum, ccexpdate)" +
                 "VALUES (" + name1 + ", " + phoneNumber1 + ", " + address1 + ", " +
                 ccnum1 + ", " + ccexpdate1 + ")";
@@ -387,8 +387,8 @@ public class tasks {
 
         //RewardsMembers: cid, login, pwd, points
         if (isRewards) {
-        //    String addToRewards = "INSERT INTO RewardsMember" + " (cid, login, pwd, points)" + " VALUES (generatedCID, username1, pwd1, points1)";
-           // System.out.println(addToRewards);
+            //    String addToRewards = "INSERT INTO RewardsMember" + " (cid, login, pwd, points)" + " VALUES (generatedCID, username1, pwd1, points1)";
+            // System.out.println(addToRewards);
             String addToRewards = "INSERT INTO RewardsMember " +
                     "VALUES (" + generatedCID + ", " + username1 + ", " + pwd1 + ", " + points1 + ")";
             try (PreparedStatement pstmt = c.prepareStatement(addToRewards)) {
@@ -582,9 +582,9 @@ public class tasks {
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 //retrieve phone number of first front desk employee
-                    String phoneNumber = rs.getString("phone_number");
-                    String employeeName = rs.getString("name");
-                    System.out.println(""+ employeeName + ": "+ phoneNumber);
+                String phoneNumber = rs.getString("phone_number");
+                String employeeName = rs.getString("name");
+                System.out.println(""+ employeeName + ": "+ phoneNumber);
                 //return phoneNumber;
             }
         } catch (SQLException e) {
