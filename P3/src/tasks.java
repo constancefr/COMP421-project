@@ -68,7 +68,7 @@ public class tasks {
             ResultSet generatedKey = pstmt.getGeneratedKeys();
             if (generatedKey.next()) {
                 generatedRID = generatedKey.getInt(1);
-                System.out.println("New CID generated: " + generatedRID);
+                System.out.println("New RID generated: " + generatedRID);
             }
         } catch (SQLException e) {
 //          TODO: handle errors??
@@ -395,18 +395,27 @@ public class tasks {
             //    String addToRewards = "INSERT INTO RewardsMember" + " (cid, login, pwd, points)" + " VALUES (generatedCID, username1, pwd1, points1)";
             // System.out.println(addToRewards);
             String addToRewards = "INSERT INTO RewardsMember " +
-                    "VALUES (" + generatedCID + ", " + username1 + ", " + pwd1 + ", " + points1 + ")";
+                    "VALUES (?, ?, ?, ?)";
             try (PreparedStatement pstmt = c.prepareStatement(addToRewards)) {
+                //generateCID
+                //username1
+                //pwd1
+                //points1
+                pstmt.setInt(1, generatedCID);
+                pstmt.setString(2, username1);
+                pstmt.setString(3, pwd1);
+                pstmt.setInt(4, points1);
                 pstmt.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         } else {
             String addToGuest = "INSERT INTO Guest " +
-                    "VALUES (" + generatedCID + ")";
+                    "VALUES (?)";
            /* String addToGuest = "INSERT INTO Guest " +
                     "VALUES (generatedCID)";*/
             try (PreparedStatement pstmt = c.prepareStatement(addToGuest)) {
+                pstmt.setInt(1, generatedCID);
                 pstmt.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
