@@ -11,7 +11,7 @@ public class tasks {
 
         int CID = initializeCustomer(c, s);
 
-        System.out.println("Where would you like to make your reservation?");
+        System.out.println("Where would you like to make your reservation?\n");
         System.out.println("1) Montreal\n2) Toronto\n3) Vancouver\n4) Ottawa\n5) Halifax\n6) Calgary");
         String location = scan.nextLine();
         switch (location) {
@@ -74,7 +74,7 @@ public class tasks {
 
         boolean valid = false;
         while (!valid) {
-            System.out.println("Please select the type of reservation you would like to make.");
+            System.out.println("Please select the type of reservation you would like to make.\n");
             System.out.println("1) Room reservation\n2) Event booking\n3) Use amenity");
             String reservationType = scan.nextLine();
             switch (reservationType) {
@@ -101,7 +101,7 @@ public class tasks {
     public static int reserveRoom(Connection c, Statement s, String location, int rid) {
         Scanner scan = new Scanner(System.in);
 
-        System.out.println("Which type of room would you like?");
+        System.out.println("Which type of room would you like?\n");
         System.out.println("1) Single\n2) Double\n3) Suite");
         String roomType = scan.nextLine();
         switch (roomType) {
@@ -162,7 +162,7 @@ public class tasks {
     public static int bookEvent(Connection c, Statement s, String date, String location, int rid) {
         Scanner scan = new Scanner(System.in);
 
-        System.out.println("What venue?");
+        System.out.println("What venue?\n");
         System.out.println("1) Garden\n2) Ballroom\n3) Rooftop");
         String venue = scan.nextLine();
         switch (venue) {
@@ -208,7 +208,7 @@ public class tasks {
     public static int scheduleAmenity(Connection c, Statement s, String date, String location, int rid) {
         Scanner scan = new Scanner(System.in);
 
-        System.out.println("Which amenity or service would you like to schedule?");
+        System.out.println("Which amenity or service would you like to schedule?\n");
         System.out.println("1) Spa\n2) Gym\n3) Pool\n4) Movie Room\n5) Bar & Restaurant\n6) Game Room");
         String amenityType = scan.nextLine();
         switch (amenityType) {
@@ -327,7 +327,7 @@ public class tasks {
         String address = scan.nextLine();
         //get ccnum
         System.out.print("Input your credit card number: \n");
-        int ccnum = Integer.valueOf(scan.nextLine());
+        String ccnum = scan.nextLine();
 //        Integer cc_num = Integer.parseInt(scan.nextLine());
 //        int ccnum = (int) cc_num;
         //get ccexpdate
@@ -404,7 +404,7 @@ public class tasks {
     public static int availableRooms(Statement s) { // , String location, String type
         Scanner scan = new Scanner(System.in);
 
-        System.out.print("Enter a hotel location.");
+        System.out.println("Enter a hotel location.\n");
         System.out.println("1) Montreal\n2) Toronto\n3) Vancouver\n4) Ottawa\n5) Halifax\n6) Calgary");
         String location = scan.nextLine();
         switch (location) {
@@ -430,7 +430,7 @@ public class tasks {
                 System.out.println("Invalid input.");
         }
 
-        System.out.println("Select a room type.");
+        System.out.println("Select a room type.\n");
         System.out.println("1) Single\n2) Double\n3) Suite");
         String roomType = scan.nextLine();
         int rs = 0;

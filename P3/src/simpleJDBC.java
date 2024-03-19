@@ -4,33 +4,21 @@ import java.sql.Connection;
 
 class simpleJDBC {
     public static void main(String[] args) throws SQLException {
-        // Unique table names.  Either the user supplies a unique identifier as a command line argument, or the program makes one up.
-        String tableName = "";
-        int sqlCode = 0;      // Variable to hold SQLCODE
-        String sqlState = "00000";  // Variable to hold SQLSTATE
 
-        if (args.length > 0)
-            tableName += args[0];
-        else
-            tableName += "exampletbl";
-
-        // Register the driver.  You must register the driver before you can use it.
+        // Registering the driver
         try {
             DriverManager.registerDriver(new com.ibm.db2.jcc.DB2Driver());
         } catch (Exception cnfe) {
             System.out.println("Class not found");
         }
 
-        // This is the url you must use for DB2.
-        //Note: This url may not valid now ! Check for the correct year and semester and server name.
+        // DB2 url
         String url = "jdbc:db2://winter2024-comp421.cs.mcgill.ca:50000/comp421";
 
-        //REMEMBER to remove your user id and password before submitting your code!!
+        // TODO REMEMBER to remove your user id and password before submitting your code!!
         String your_userid = "cfrach";
         String your_password = "BQAEknFZT2W1";
 
-        //AS AN ALTERNATIVE, you can just set your password in the shell environment in the Unix (as shown below) and read it from there.
-        //$  export SOCSPASSWD=yoursocspasswd
         if (your_userid == null && (your_userid = System.getenv("SOCSUSER")) == null) {
             System.err.println("Error!! do not have a password to connect to the database!");
             System.exit(1);
@@ -47,9 +35,8 @@ class simpleJDBC {
         // TODO
         Scanner scan = new Scanner(System.in);
         System.out.println(
-            "Hello and welcome to The Queen! Get ready for a data-driven delight in hospitality where SQL queries " +
-            "are as smooth as our freshly fluffed pillows. Your comfort is our primary key, and your satisfaction is " +
-            "our indexed priority. Enjoy a stay where even the nerdiest get a warm, relational welcome!\n");
+            "\nHello and welcome to The Queen!\nGet ready for a data-driven delight in hospitality where SQL queries " +
+            "are as smooth as our freshly fluffed pillows.\n");
         int userInput = 0;
         while (userInput != 6) { // loop until user quits.
             userInput = menuPrompt();
@@ -58,8 +45,10 @@ class simpleJDBC {
                 case 1: // make reservation
                     tasks.makeReservation(con, statement);
                     System.out.println("Your reservation was made. See you soon!");
-                case 2: // cancel reservation
+                    break;
+                case 2: // TODO cancel reservation
 
+                    break;
                 case 3: // check room availability
                     int availableCount = tasks.availableRooms(statement);
                     if (availableCount == 0) {
@@ -67,11 +56,14 @@ class simpleJDBC {
                     } else {
                         System.out.println("There are " + availableCount + " rooms available.");
                     }
-                case 4: // get customer support
+                    break;
+                case 4: // TODO get customer support
 
+                    break;
                 case 5: // create rewards member account
                     int cid = tasks.createAccount(con, statement, true);
                     System.out.println("Your account was created. Here is you unique Rewards Member ID: " + cid);
+                    break;
                 case 6: // quit
                     System.out.println("Thank you for staying at The Queen. Your satisfaction is our primary key, " +
                             "so please rate your experience with us today!\n");
@@ -82,6 +74,7 @@ class simpleJDBC {
                     } else {
                         System.out.println("Bye!");
                     }
+                    break;
             }
         }
 
