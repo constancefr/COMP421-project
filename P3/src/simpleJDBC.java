@@ -16,8 +16,8 @@ class simpleJDBC {
         String url = "jdbc:db2://winter2024-comp421.cs.mcgill.ca:50000/comp421";
 
         // TODO REMEMBER to remove your user id and password before submitting your code!!
-        String your_userid = "cfrach";
-        String your_password = "BQAEknFZT2W1";
+        String your_userid = "mcheck";
+        String your_password = "Shell7712345$";
 
 
         if (your_userid == null && (your_userid = System.getenv("SOCSUSER")) == null) {
