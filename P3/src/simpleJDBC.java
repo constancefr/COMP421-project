@@ -62,6 +62,8 @@ class simpleJDBC {
                 case 4:
                    // String phoneNum = tasks.getSupport(con, statement);
                     //System.out.println("Here is the phone number of an available front desk assistant: " + phoneNum);
+                    System.out.println("Here is the list of Front Desk employees at your desired location");
+                    tasks.getSupport(con, statement);
                     break;
                 case 5: // create rewards member account
                     int cid = tasks.createAccount(con, statement, true);
