@@ -494,6 +494,7 @@ public class tasks {
 
 
     public static String getSupport(Connection c, Statement s){
+        //show front desk employees and pick one
         Scanner scan = new Scanner(System.in);
         System.out.println("Please enter the location of the hotel you would like to contact:\n" +
                 "1: Montreal\n" +
