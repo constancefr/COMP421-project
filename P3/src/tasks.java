@@ -481,7 +481,7 @@ public class tasks {
         return roomCount;
     }
 
-    public static void cancelRes (Connection c, Statement s){
+    public static int cancelRes (Connection c, Statement s){
         //Scanner to get rid from the user
         Scanner sc = new Scanner(System.in);
         System.out.println("Please input the rid of the reservation you would like to cancel: ");
@@ -564,6 +564,7 @@ public class tasks {
                 System.out.println("Invalid input");
                 break;
         }
+        return 0;
     }
 
     public static void getSupport (Connection c, Statement s){

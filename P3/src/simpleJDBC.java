@@ -95,7 +95,7 @@ class simpleJDBC {
                 + "1) Make a reservation for a room, event or amenity\n"
                 + "2) Cancel a reservation\n"
                 + "3) Check the availability of a certain room type\n"
-                + "4) Redeem your points for a stay\n"
+                + "4) Find a Front Desk employee at your desired location\n"
                 + "5) Create a rewards member\n"
                 + "6) Quit\n";
         System.out.println(menu);
