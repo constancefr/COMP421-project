@@ -37,16 +37,6 @@ public class tasks {
             default:
                 System.out.println("Invalid input.");
         }
-/*
-        String lastCrawlDate = "2014-01-28";
-        Date utilDate = new SimpleDateFormat("yyyy-MM-dd").parse(lastCrawlDate);
-        // because PreparedStatement#setDate(..) expects a java.sql.Date argument
-        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-
-        Connection con = ...;
-        PreparedStatement p = con.prepareStatement("insert into JsonData (last_crawl_date) values(?))");
-        p.setDate(1, sqlDate);
- */
 
         System.out.println("Please enter the start date for your reservation (YYYY-MM-DD)...");
 //        String startDate1 = scan.nextLine();
@@ -57,12 +47,13 @@ public class tasks {
 //        String endDate1 = "'" + scan.nextLine() + "'";
         Date endDate1 = Date.valueOf(scan.nextLine());
         System.out.println("How many people will be there?");
-        int numberOfPeople1 = Integer.valueOf(scan.nextLine());
+        int numberOfPeople1 = Integer.parseInt(scan.nextLine());
 
+//        String addToReservation = "INSERT INTO Reservation" + " (cid, numberOfPeople, startDate, endDate)"
+//                + " VALUES (" + cid1 + ", " + numberOfPeople1 + ", " + startDate1 + ", " + endDate1 + ")";
 //        String addToReservation = "INSERT INTO Reservation" + " (cid, numberOfPeople, startDate, endDate)"
 //                + " VALUES (" + cid1 + ", " + numberOfPeople1 + ", CAST(" + startDate1 + " AS DATE)" + ", CAST(" + endDate1 + " AS DATE)" + ")";
         String addToReservation = "INSERT INTO Reservation (cid, numberOfPeople, startDate, endDate) VALUES (?, ?, ?, ?)";
-
 
         System.out.println(addToReservation);
 
@@ -75,25 +66,14 @@ public class tasks {
             pstmt.setDate(4, endDate1);
             pstmt.executeUpdate();
             ResultSet generatedKey = pstmt.getGeneratedKeys();
-            generatedRID = generatedKey.getInt(1);
-            System.out.println("New CID generated: " + generatedRID);
+            if (generatedKey.next()) {
+                generatedRID = generatedKey.getInt(1);
+                System.out.println("New CID generated: " + generatedRID);
+            }
         } catch (SQLException e) {
 //          TODO: handle errors??
             e.printStackTrace();
         }
-//        String tableName = "Reservation";
-//        try {
-//            String insertSQL = "INSERT INTO " + tableName + " (cid, numberOfPeople, startDate, endDate)" + " VALUES (CID, numPeople, startDate, endDate)";
-//            System.out.println(insertSQL);
-//            s.executeUpdate(insertSQL);
-//            System.out.println("DONE");
-//        } catch (SQLException e) {
-//            int sqlCode = e.getErrorCode(); // Get SQLCODE
-//            String sqlState = e.getSQLState(); // Get SQLSTATE
-//            // something more meaningful than a print would be good
-//            System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
-//            System.out.println(e);
-//        }
 
         boolean valid = false;
         while (!valid) {

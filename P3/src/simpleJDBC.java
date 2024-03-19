@@ -34,7 +34,6 @@ class simpleJDBC {
         Statement statement = con.createStatement();
 
 
-        // TODO
         Scanner scan = new Scanner(System.in);
         System.out.println(
                 "\nHello and welcome to The Queen!\nGet ready for a data-driven delight in hospitality where SQL queries " +
@@ -48,8 +47,9 @@ class simpleJDBC {
                     tasks.makeReservation(con, statement);
                     System.out.println("Your reservation was made. See you soon!");
                     break;
-                case 2: // TODO cancel reservation
-
+                case 2: // TODO return something??
+                    tasks.cancelRes(con, statement);
+                    System.out.println("Your reservation was cancelled.");
                     break;
                 case 3: // check room availability
                     int availableCount = tasks.availableRooms(con, statement);
@@ -59,8 +59,9 @@ class simpleJDBC {
                         System.out.println("There are " + availableCount + " rooms available.");
                     }
                     break;
-                case 4: // TODO get customer support
-
+                case 4:
+                    String phoneNum = tasks.getSupport(con, statement);
+                    System.out.println("Here is the phone number of an available front desk assistant: " + phoneNum);
                     break;
                 case 5: // create rewards member account
                     int cid = tasks.createAccount(con, statement, true);
