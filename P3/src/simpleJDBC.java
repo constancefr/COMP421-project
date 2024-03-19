@@ -52,7 +52,7 @@ class simpleJDBC {
 
                     break;
                 case 3: // check room availability
-                    int availableCount = tasks.availableRooms(statement);
+                    int availableCount = tasks.availableRooms(con, statement);
                     if (availableCount == 0) {
                         System.out.println("There are no rooms of this type available.");
                     } else {
