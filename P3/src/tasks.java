@@ -49,7 +49,7 @@ public class tasks {
 
         // DB2 GENERATES UNIQUE CID AUTOMATICALLY!!
         int generatedRID = 0;
-        try (PreparedStatement pstmt = c.prepareStatement(addToReservation, PreparedStatement.RETURN_GENERATED_KEYS)){
+        try (PreparedStatement pstmt = c.prepareStatement(addToReservation, PreparedStatement.RETURN_GENERATED_KEYS)) {
             pstmt.executeUpdate(addToReservation);
             ResultSet generatedKey = pstmt.getGeneratedKeys();
             generatedRID = generatedKey.getInt(1);
@@ -361,7 +361,7 @@ public class tasks {
 
         // DB2 GENERATES UNIQUE CID AUTOMATICALLY!!
         int generatedCID = 0;
-        try (PreparedStatement pstmt = c.prepareStatement(addToCustomer, PreparedStatement.RETURN_GENERATED_KEYS)){
+        try (PreparedStatement pstmt = c.prepareStatement(addToCustomer, PreparedStatement.RETURN_GENERATED_KEYS)) {
             pstmt.executeUpdate(addToCustomer);
             ResultSet generatedKey = pstmt.getGeneratedKeys();
             generatedCID = generatedKey.getInt(1);
@@ -401,100 +401,143 @@ public class tasks {
     }
 
 
-    public static boolean isRoomAvailable(Connection c, Statement s, String location, String type){
-        String getCountOfAvailRooms = "SELECT COUNT(*) FROM Room r" +
-                "WHERE (r.location = " + location + " AND r.roomType = " + type +
-                ")";
+    public static int availableRooms(Statement s) { // , String location, String type
+        Scanner scan = new Scanner(System.in);
+
+        System.out.print("Enter a hotel location.");
+        System.out.println("1) Montreal\n2) Toronto\n3) Vancouver\n4) Ottawa\n5) Halifax\n6) Calgary");
+        String location = scan.nextLine();
+        switch (location) {
+            case "1":
+                location = "Montreal";
+                break;
+            case "2":
+                location = "Toronto";
+                break;
+            case "3":
+                location = "Vancouver";
+                break;
+            case "4":
+                location = "Ottawa";
+                break;
+            case "5":
+                location = "Halifax";
+                break;
+            case "6":
+                location = "Calgary";
+                break;
+            default:
+                System.out.println("Invalid input.");
+        }
+
+        System.out.println("Select a room type.");
+        System.out.println("1) Single\n2) Double\n3) Suite");
+        String roomType = scan.nextLine();
         int rs = 0;
-        try {
-            rs = s.executeUpdate(getCountOfAvailRooms);
-        } catch(SQLException e){
-            e.printStackTrace();
+        switch (roomType) {
+            case "1":
+                roomType = "Single";
+                break;
+            case "2":
+                roomType = "Double";
+                break;
+            case "3":
+                roomType = "Suite";
+                break;
+            default:
+                System.out.println("Invalid input.");
+
+                String getCountOfAvailRooms = "SELECT COUNT(*) FROM Room r" +
+                        "WHERE (r.location = " + location + " AND r.roomType = " + roomType +
+                        ")";
+
+                try {
+                    rs = s.executeUpdate(getCountOfAvailRooms);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
         }
-        if(rs == 0){
-            return false;
-        }
-        return true;
+
+        return rs;
     }
 
-    public static void cancelRes(Connection c, Statement s){
-       //Scanner to get rid from the user
+    public static void cancelRes (Connection c, Statement s){
+        //Scanner to get rid from the user
         Scanner sc = new Scanner(System.in);
         System.out.println("Please input the rid of the reservation you would like to cancel: ");
         Integer i = Integer.parseInt(sc.nextLine());
-        int rid = (int)i;
+        int rid = (int) i;
 
         //delete rid from reservation table
         String deleteRes = "DELETE FROM Reservation" +
                 "WHERE rid = " + rid + "";
-        try{
+        try {
             s.executeUpdate(deleteRes);
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
         int whichRelation = 0;
         //scan tables to see if it is a room, amenity, or event
         String roomDeleteQuery = "SELECT * FROM Reserve WHERE rid = ?";
-        try(PreparedStatement pstmt1 = c.prepareStatement(roomDeleteQuery)) {
+        try (PreparedStatement pstmt1 = c.prepareStatement(roomDeleteQuery)) {
             pstmt1.setInt(1, rid);
             ResultSet rs = pstmt1.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 whichRelation = 1;
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         String amenityDeleteQuery = "SELECT * FROM Schedule WHERE rid = ?";
-        try(PreparedStatement pstmt2 = c.prepareStatement(amenityDeleteQuery)) {
+        try (PreparedStatement pstmt2 = c.prepareStatement(amenityDeleteQuery)) {
             pstmt2.setInt(1, rid);
             ResultSet rs = pstmt2.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 whichRelation = 2;
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         String eventDeleteQuery = "SELECT * FROM Event WHERE rid = ?";
-        try(PreparedStatement pstmt3 = c.prepareStatement(eventDeleteQuery)) {
+        try (PreparedStatement pstmt3 = c.prepareStatement(eventDeleteQuery)) {
             pstmt3.setInt(1, rid);
             ResultSet rs = pstmt3.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 whichRelation = 3;
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        String deleteBooking = "DELETE FROM ? WHERE rid = " + rid +"";
+        String deleteBooking = "DELETE FROM ? WHERE rid = " + rid + "";
         switch (whichRelation) {
             case 1:
-                try(PreparedStatement delstmt1 = c.prepareStatement(deleteBooking)) {
+                try (PreparedStatement delstmt1 = c.prepareStatement(deleteBooking)) {
                     delstmt1.setString(1, "Reserve");
                     delstmt1.executeUpdate();
-                } catch (SQLException e){
+                } catch (SQLException e) {
                     e.printStackTrace();
                 }
             case 2:
-                try(PreparedStatement delstmt2 = c.prepareStatement(deleteBooking)) {
+                try (PreparedStatement delstmt2 = c.prepareStatement(deleteBooking)) {
                     delstmt2.setString(1, "Schedule");
                     delstmt2.executeUpdate();
-                } catch (SQLException e){
+                } catch (SQLException e) {
                     e.printStackTrace();
                 }
             case 3:
-                try(PreparedStatement delstmt3 = c.prepareStatement(deleteBooking)) {
+                try (PreparedStatement delstmt3 = c.prepareStatement(deleteBooking)) {
                     delstmt3.setString(1, "Event");
                     delstmt3.executeUpdate();
-                } catch (SQLException e){
+                } catch (SQLException e) {
                     e.printStackTrace();
                 }
         }
     }
 
-
-    public static String getSupport(Connection c, Statement s){
-        //show front desk employees and pick one
+=
+    public static String getSupport (Connection c, Statement s){
         Scanner scan = new Scanner(System.in);
         System.out.println("Please enter the location of the hotel you would like to contact:\n" +
                 "1: Montreal\n" +
@@ -505,7 +548,7 @@ public class tasks {
                 "6: Vancouver");
         String hotelLocation = scan.nextLine();
         String loc = "";
-        switch (hotelLocation){
+        switch (hotelLocation) {
             case "1":
                 loc = "Montreal";
             case "2":
@@ -521,17 +564,17 @@ public class tasks {
         }
 
         String query = "SELECT * FROM Employee WHERE (location = ? AND department = ?";
-        try(PreparedStatement pstmt = c.prepareStatement(query)) {
+        try (PreparedStatement pstmt = c.prepareStatement(query)) {
             pstmt.setString(1, loc);
             pstmt.setString(2, "Front Desk");
 
             ResultSet rs = pstmt.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 //retrieve phone number of first front desk employee
                 String phoneNumber = rs.getString("phone_number");
                 return phoneNumber;
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return "";
