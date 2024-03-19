@@ -545,7 +545,7 @@ public class tasks {
         }
     }
 
-    public static String getSupport (Connection c, Statement s){
+    public static void getSupport (Connection c, Statement s){
         Scanner scan = new Scanner(System.in);
         System.out.println("Please enter the location of the hotel you would like to contact:\n" +
                 "1: Montreal\n" +
@@ -571,21 +571,23 @@ public class tasks {
                 loc = "Vancouver";
         }
 
-        String query = "SELECT * FROM Employee WHERE (location = ? AND department = ?";
+        String query = "SELECT name, phone_number FROM Employee WHERE (location = ? AND department = ?)";
         try (PreparedStatement pstmt = c.prepareStatement(query)) {
             pstmt.setString(1, loc);
             pstmt.setString(2, "Front Desk");
 
             ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
+            while (rs.next()) {
                 //retrieve phone number of first front desk employee
-                String phoneNumber = rs.getString("phone_number");
-                return phoneNumber;
+                    String phoneNumber = rs.getString("phone_number");
+                    String employeeName = rs.getString("name");
+                    System.out.println(""+ employeeName + ": "+ phoneNumber);
+                //return phoneNumber;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return "";
+        //return "";
     }
 
 }
