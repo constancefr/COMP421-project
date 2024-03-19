@@ -85,14 +85,17 @@ public class tasks {
                     valid = true;
                     // TODO: test reserve room
                     reserveRoom(c, s, location1, generatedRID);
+                    break;
                 case "2":
                     valid = true;
                     // TODO: test event booking
                     bookEvent(c, s, startDate1, location1, generatedRID);
+                    break;
                 case "3":
                     valid = true;
                     // TODO: test book amenity
                     scheduleAmenity(c, s, startDate1, location1, generatedRID);
+                    break;
                 default:
                     System.out.println("Invalid input.");
             }
@@ -200,7 +203,7 @@ public class tasks {
                 System.out.println("Invalid input.");
         }
 
-        String addToEvent = "INSERT INTO Event (location, eventDate, venue, cateredFlag, rid) + VALUES (?, ?, ?, ?, ?)";
+        String addToEvent = "INSERT INTO Event (location, eventDate, venue, cateredFlag, rid) VALUES (?, ?, ?, ?, ?)";
         System.out.println(addToEvent);
 
         try (PreparedStatement pstmt = c.prepareStatement(addToEvent)) {
@@ -367,7 +370,6 @@ public class tasks {
 
         //execute SQL statement that inserts this new user into the Customer table and RewardsMember table
         String addToCustomer = "INSERT INTO Customer (name, email, phone_number, address, ccnum, ccexpdate) VALUES (?, ?, ?, ?, ?)";
-//                "VALUES (" + name1 + ", " + phoneNumber1 + ", " + address1 + ", " + ccnum1 + ", " + ccexpdate1 + ")";
 
         // DB2 GENERATES UNIQUE CID AUTOMATICALLY!!
         int generatedCID = 0;
@@ -390,8 +392,8 @@ public class tasks {
 
         //RewardsMembers: cid, login, pwd, points
         if (isRewards) {
-        //    String addToRewards = "INSERT INTO RewardsMember" + " (cid, login, pwd, points)" + " VALUES (generatedCID, username1, pwd1, points1)";
-           // System.out.println(addToRewards);
+            //    String addToRewards = "INSERT INTO RewardsMember" + " (cid, login, pwd, points)" + " VALUES (generatedCID, username1, pwd1, points1)";
+            // System.out.println(addToRewards);
             String addToRewards = "INSERT INTO RewardsMember " +
                     "VALUES (" + generatedCID + ", " + username1 + ", " + pwd1 + ", " + points1 + ")";
             try (PreparedStatement pstmt = c.prepareStatement(addToRewards)) {
@@ -462,12 +464,15 @@ public class tasks {
                 System.out.println("Invalid input.");
 
                 String getCountOfAvailRooms = "SELECT COUNT(*) FROM Room r" +
-                        "WHERE (r.location = " + location1 + " AND r.roomType = " + roomType1 +
-                        ")";
+                        "WHERE (r.location = ? AND r.roomType = ?)";
 
                 try (PreparedStatement pstmt = c.prepareStatement(getCountOfAvailRooms)) {
+                    pstmt.setString(1, location1);
+                    pstmt.setString(2, roomType1);
                     ResultSet rs = pstmt.executeQuery();
-                    roomCount = rs.getInt(1);
+                    if(rs.next()){
+                        roomCount = rs.getInt(1);
+                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -485,8 +490,9 @@ public class tasks {
 
         //delete rid from reservation table
         String deleteRes = "DELETE FROM Reservation" +
-                "WHERE rid = " + rid1 + "";
+                "WHERE rid = ?";
         try (PreparedStatement pstmt = c.prepareStatement(deleteRes)) {
+            pstmt.setInt(1, rid1);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -525,33 +531,42 @@ public class tasks {
             e.printStackTrace();
         }
 
-        String deleteBooking = "DELETE FROM ? WHERE rid = " + rid1 + "";
+        String deleteBooking = "DELETE FROM ? WHERE rid = ?";
         switch (whichRelation) {
             case 1:
                 try (PreparedStatement delstmt1 = c.prepareStatement(deleteBooking)) {
                     delstmt1.setString(1, "Reserve");
+                    delstmt1.setInt(2, rid1);
                     delstmt1.executeUpdate();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+                break;
             case 2:
                 try (PreparedStatement delstmt2 = c.prepareStatement(deleteBooking)) {
                     delstmt2.setString(1, "Schedule");
+                    delstmt2.setInt(2, rid1);
                     delstmt2.executeUpdate();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+                break;
             case 3:
                 try (PreparedStatement delstmt3 = c.prepareStatement(deleteBooking)) {
                     delstmt3.setString(1, "Event");
+                    delstmt3.setInt(2, rid1);
                     delstmt3.executeUpdate();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+                break;
+            default:
+                System.out.println("Invalid input");
+                break;
         }
     }
 
-    public static String getSupport (Connection c, Statement s){
+    public static void getSupport (Connection c, Statement s){
         Scanner scan = new Scanner(System.in);
         System.out.println("Please enter the location of the hotel you would like to contact:\n" +
                 "1: Montreal\n" +
@@ -577,21 +592,27 @@ public class tasks {
                 loc = "Vancouver";
         }
 
-        String query = "SELECT * FROM Employee WHERE (location = ? AND department = ?";
+        String query = "SELECT name, phone_number FROM Employee WHERE (location = ? AND department = ?)";
         try (PreparedStatement pstmt = c.prepareStatement(query)) {
             pstmt.setString(1, loc);
             pstmt.setString(2, "Front Desk");
 
             ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
+            while (rs.next()) {
                 //retrieve phone number of first front desk employee
-                String phoneNumber = rs.getString("phone_number");
-                return phoneNumber;
+                //String phoneNumber = rs.getString("phone_number");
+                //String employeeName = rs.getString("name");
+                for(int i = 1; i <= 2; i++){
+                    //1: prints employee name
+                    //2: prints employee phone number
+                    System.out.println(rs.getString(i));
+                }
+                //return phoneNumber;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return "";
+        //return "";
     }
 
 }

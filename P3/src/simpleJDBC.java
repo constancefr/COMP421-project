@@ -45,37 +45,37 @@ class simpleJDBC {
             switch (userInput) {
                 case 1: // make reservation
                     tasks.makeReservation(con, statement);
-                    System.out.println("Your reservation was made. See you soon!");
+                    System.out.println("Your reservation was made. See you soon!\n");
                     break;
                 case 2: // TODO return something??
                     tasks.cancelRes(con, statement);
-                    System.out.println("Your reservation was cancelled.");
+                    System.out.println("Your reservation was cancelled.\n");
                     break;
                 case 3: // check room availability
                     int availableCount = tasks.availableRooms(con, statement);
                     if (availableCount == 0) {
-                        System.out.println("There are no rooms of this type available.");
+                        System.out.println("There are no rooms of this type available.\n");
                     } else {
-                        System.out.println("There are " + availableCount + " rooms available.");
+                        System.out.println("There are " + availableCount + " rooms available.\n");
                     }
                     break;
                 case 4:
-                    String phoneNum = tasks.getSupport(con, statement);
-                    System.out.println("Here is the phone number of an available front desk assistant: " + phoneNum);
+                   // String phoneNum = tasks.getSupport(con, statement);
+                    //System.out.println("Here is the phone number of an available front desk assistant: " + phoneNum);
                     break;
                 case 5: // create rewards member account
                     int cid = tasks.createAccount(con, statement, true);
-                    System.out.println("Your account was created. Here is you unique Rewards Member ID: " + cid);
+                    System.out.println("Your account was created. Here is you unique Rewards Member ID: " + cid + "\n");
                     break;
                 case 6: // quit
                     System.out.println("Thank you for staying at The Queen. Your satisfaction is our primary key, " +
-                            "so please rate your experience with us today!\n");
-                    System.out.println("* | ** | *** | **** | *****");
+                            "so please rate your experience with us today!");
+                    System.out.println("* | ** | *** | **** | *****\n");
                     String userRating = scan.nextLine();
                     if (userRating.equals("*****")) {
-                        System.out.println("Splendid, we hope to see you soon!");
+                        System.out.println("Splendid, we hope to see you soon!\n");
                     } else {
-                        System.out.println("Bye!");
+                        System.out.println("Bye!\n");
                     }
                     break;
             }
