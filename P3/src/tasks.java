@@ -44,7 +44,8 @@ public class tasks {
         System.out.println("How many people will be there?");
         int numberOfPeople1 = Integer.valueOf(scan.nextLine());
 
-        String addToReservation = "INSERT INTO Reservation" + " (cid, numberOfPeople, startDate, endDate)" + " VALUES (cid1, numberOfPeople1, startDate1, endDate1)";
+        String addToReservation = "INSERT INTO Reservation" + " (cid, numberOfPeople, startDate, endDate)"
+                + " VALUES (" + cid1 + ", " + numberOfPeople1 + ", " + startDate1 + ", " + endDate1 + ")";
         System.out.println(addToReservation);
 
         // DB2 GENERATES UNIQUE CID AUTOMATICALLY!!
@@ -119,12 +120,12 @@ public class tasks {
         }
 
         // Allocate room number automatically
-        int roomNumber = findAvailableRoom(c, location1, roomType1);
-        if (roomNumber == 0) {
+        int roomNumber1 = findAvailableRoom(c, location1, roomType1);
+        if (roomNumber1 == 0) {
             System.out.println("No available " + roomType1 + " room found.");
         }
 
-        String addToReserve = "INSERT INTO Reserve" + " (rid, location, roomNumber)" + " VALUES (rid1, location1, roomNumber1)";
+        String addToReserve = "INSERT INTO Reserve" + " (rid, location, roomNumber)" + " VALUES (" + rid1 + ", " + location1 + ", " + roomNumber1 + ")";
         System.out.println(addToReserve);
 
         try (PreparedStatement pstmt = c.prepareStatement(addToReserve)) {
@@ -181,7 +182,7 @@ public class tasks {
 
         System.out.println("Will it be a catered event? (y/n)");
         String userInput = scan.nextLine();
-        boolean cateredFlag1;
+        boolean cateredFlag1 = false;
         switch (userInput) {
             case "y":
                 cateredFlag1 = true;
@@ -193,7 +194,8 @@ public class tasks {
                 System.out.println("Invalid input.");
         }
 
-        String addToEvent = "INSERT INTO Event" + " (location, eventDate, venue, cateredFlag, rid)" + " VALUES (location1, eventDate1, venue1, cateredFlag1, rid1)";
+        String addToEvent = "INSERT INTO Event" + " (location, eventDate, venue, cateredFlag, rid)"
+                + " VALUES (" + location1 + ", " + eventDate1 + ", " + venue1 + ", " + cateredFlag1 + ", " + rid1 + ")";
         System.out.println(addToEvent);
 
         try (PreparedStatement pstmt = c.prepareStatement(addToEvent)) {
@@ -229,10 +231,13 @@ public class tasks {
         }
 
         System.out.println("Please enter a time for your reservation (e.g. 18:30:00)");
-        String timeSlot = date1 + " " + scan.nextLine();
+        String timeSlot1 = date1 + " " + scan.nextLine();
 
         String query = "SELECT * FROM Amenity WHERE location = ? AND amenityType = ? LIMIT 1";
 
+
+        int floorNumber1 = 0;
+        String amenityName1 = "";
         // Find first available room matching the required type
         try (PreparedStatement pstmt = c.prepareStatement(query)) {
             pstmt.setString(1, location1);
@@ -241,8 +246,8 @@ public class tasks {
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 // Retrieve room details from the ResultSet
-                String amenityName1 = rs.getString("amenityName");
-                int floorNumber1 = rs.getInt("floorNumber");
+                amenityName1 = rs.getString("amenityName");
+                floorNumber1 = rs.getInt("floorNumber");
             } else {
                 System.out.println("This amenity is unavailable in " + location1 + ".");
             }
@@ -250,7 +255,8 @@ public class tasks {
             e.printStackTrace();
         }
 
-        String addToSchedule = "INSERT INTO Schedule" + " (rid, location, timeSlot, floorNumber, amenityName)" + " VALUES (rid1, location1, timeslot1, floorNumber1, amenityName1)";
+        String addToSchedule = "INSERT INTO Schedule" + " (rid, location, timeSlot, floorNumber, amenityName)"
+                + " VALUES (" + rid1 + ", " + location1 + ", " + timeSlot1 + ", " + floorNumber1 + ", " + amenityName1 + ")";
         System.out.println(addToSchedule);
 
         try (PreparedStatement pstmt = c.prepareStatement(addToSchedule)) {
