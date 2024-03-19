@@ -9,42 +9,42 @@ public class tasks {
     public static int makeReservation(Connection c, Statement s) {
         Scanner scan = new Scanner(System.in);
 
-        int CID = initializeCustomer(c, s);
+        int cid1 = initializeCustomer(c, s);
 
         System.out.println("Where would you like to make your reservation?\n");
         System.out.println("1) Montreal\n2) Toronto\n3) Vancouver\n4) Ottawa\n5) Halifax\n6) Calgary");
-        String location = scan.nextLine();
-        switch (location) {
+        String location1 = scan.nextLine();
+        switch (location1) {
             case "1":
-                location = "Montreal";
+                location1 = "Montreal";
                 break;
             case "2":
-                location = "Toronto";
+                location1 = "Toronto";
                 break;
             case "3":
-                location = "Vancouver";
+                location1 = "Vancouver";
                 break;
             case "4":
-                location = "Ottawa";
+                location1 = "Ottawa";
                 break;
             case "5":
-                location = "Halifax";
+                location1 = "Halifax";
                 break;
             case "6":
-                location = "Calgary";
+                location1 = "Calgary";
                 break;
             default:
                 System.out.println("Invalid input.");
         }
 
         System.out.println("Please enter the start date for your reservation (YYYY-MM-DD)...");
-        String startDate = "'" + scan.nextLine() + "'";
+        String startDate1 = "'" + scan.nextLine() + "'";
         System.out.println("...and the end date.");
-        String endDate = "'" + scan.nextLine() + "'";
+        String endDate1 = "'" + scan.nextLine() + "'";
         System.out.println("How many people will be there?");
-        int numPeople = Integer.valueOf(scan.nextLine());
+        int numberOfPeople1 = Integer.valueOf(scan.nextLine());
 
-        String addToReservation = "INSERT INTO Reservation" + " (cid, numberOfPeople, startDate, endDate)" + " VALUES (CID, numPeople, startDate, endDate)";
+        String addToReservation = "INSERT INTO Reservation" + " (cid, numberOfPeople, startDate, endDate)" + " VALUES (cid1, numberOfPeople1, startDate1, endDate1)";
         System.out.println(addToReservation);
 
         // DB2 GENERATES UNIQUE CID AUTOMATICALLY!!
@@ -81,15 +81,15 @@ public class tasks {
                 case "1":
                     valid = true;
                     // TODO: test reserve room
-                    reserveRoom(c, s, location, generatedRID);
+                    reserveRoom(c, s, location1, generatedRID);
                 case "2":
                     valid = true;
                     // TODO: test event booking
-                    bookEvent(c, s, startDate, location, generatedRID);
+                    bookEvent(c, s, startDate1, location1, generatedRID);
                 case "3":
                     valid = true;
                     // TODO: test book amenity
-                    scheduleAmenity(c, s, location, startDate, generatedRID);
+                    scheduleAmenity(c, s, location1, startDate1, generatedRID);
                 default:
                     System.out.println("Invalid input.");
             }
@@ -98,33 +98,33 @@ public class tasks {
         return 0;
     }
 
-    public static int reserveRoom(Connection c, Statement s, String location, int rid) {
+    public static int reserveRoom(Connection c, Statement s, String location1, int rid1) {
         Scanner scan = new Scanner(System.in);
 
         System.out.println("Which type of room would you like?\n");
         System.out.println("1) Single\n2) Double\n3) Suite");
-        String roomType = scan.nextLine();
-        switch (roomType) {
+        String roomType1 = scan.nextLine();
+        switch (roomType1) {
             case "1":
-                roomType = "Single";
+                roomType1 = "Single";
                 break;
             case "2":
-                roomType = "Double";
+                roomType1 = "Double";
                 break;
             case "3":
-                roomType = "Suite";
+                roomType1 = "Suite";
                 break;
             default:
                 System.out.println("Invalid input.");
         }
 
         // Allocate room number automatically
-        int roomNumber = findAvailableRoom(c, location, roomType);
+        int roomNumber = findAvailableRoom(c, location1, roomType1);
         if (roomNumber == 0) {
-            System.out.println("No available " + roomType + " room found.");
+            System.out.println("No available " + roomType1 + " room found.");
         }
 
-        String addToReserve = "INSERT INTO Reserve" + " (rid, location, roomNumber)" + " VALUES (rid, location, roomNumber)";
+        String addToReserve = "INSERT INTO Reserve" + " (rid, location, roomNumber)" + " VALUES (rid1, location1, roomNumber1)";
         System.out.println(addToReserve);
 
         try (PreparedStatement pstmt = c.prepareStatement(addToReserve)) {
@@ -136,20 +136,20 @@ public class tasks {
         return 0;
     }
 
-    public static int findAvailableRoom(Connection c, String location, String type) {
+    public static int findAvailableRoom(Connection c, String location1, String roomType1) {
         String query = "SELECT * FROM Room WHERE roomAvail = ? AND location = ? AND roomType = ? LIMIT 1";
 
         // Find first available room matching the required type
         try (PreparedStatement pstmt = c.prepareStatement(query)) {
             pstmt.setBoolean(1, true);
-            pstmt.setString(2, location);
-            pstmt.setString(3, type);
+            pstmt.setString(2, location1);
+            pstmt.setString(3, roomType1);
 
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 // Retrieve room details from the ResultSet
-                int roomNumber = rs.getInt("roomNumber");
-                return roomNumber;
+                int roomNumber1 = rs.getInt("roomNumber");
+                return roomNumber1;
             } else {
                 return 0;
             }
@@ -159,21 +159,21 @@ public class tasks {
         }
     }
 
-    public static int bookEvent(Connection c, Statement s, String date, String location, int rid) {
+    public static int bookEvent(Connection c, Statement s, String eventDate1, String location1, int rid1) {
         Scanner scan = new Scanner(System.in);
 
         System.out.println("What venue?\n");
         System.out.println("1) Garden\n2) Ballroom\n3) Rooftop");
-        String venue = scan.nextLine();
-        switch (venue) {
+        String venue1 = scan.nextLine();
+        switch (venue1) {
             case "1":
-                venue = "Garden";
+                venue1 = "Garden";
                 break;
             case "2":
-                venue = "Ballroom";
+                venue1 = "Ballroom";
                 break;
             case "3":
-                venue = "Rooftop";
+                venue1 = "Rooftop";
                 break;
             default:
                 System.out.println("Invalid input.");
@@ -181,19 +181,19 @@ public class tasks {
 
         System.out.println("Will it be a catered event? (y/n)");
         String userInput = scan.nextLine();
-        boolean cateredFlag;
+        boolean cateredFlag1;
         switch (userInput) {
             case "y":
-                cateredFlag = true;
+                cateredFlag1 = true;
                 break;
             case "n":
-                cateredFlag = false;
+                cateredFlag1 = false;
                 break;
             default:
                 System.out.println("Invalid input.");
         }
 
-        String addToEvent = "INSERT INTO Event" + " (location, eventDate, venue, cateredFlag, rid)" + " VALUES (location, date, venue, cateredFlag, rid)";
+        String addToEvent = "INSERT INTO Event" + " (location, eventDate, venue, cateredFlag, rid)" + " VALUES (location1, eventDate1, venue1, cateredFlag1, rid1)";
         System.out.println(addToEvent);
 
         try (PreparedStatement pstmt = c.prepareStatement(addToEvent)) {
@@ -205,52 +205,52 @@ public class tasks {
         return 0;
     }
 
-    public static int scheduleAmenity(Connection c, Statement s, String date, String location, int rid) {
+    public static int scheduleAmenity(Connection c, Statement s, String date1, String location1, int rid1) {
         Scanner scan = new Scanner(System.in);
 
         System.out.println("Which amenity or service would you like to schedule?\n");
         System.out.println("1) Spa\n2) Gym\n3) Pool\n4) Movie Room\n5) Bar & Restaurant\n6) Game Room");
-        String amenityType = scan.nextLine();
-        switch (amenityType) {
+        String amenityType1 = scan.nextLine();
+        switch (amenityType1) {
             case "1":
-                amenityType = "Spa";
+                amenityType1 = "Spa";
             case "2":
-                amenityType = "Gym";
+                amenityType1 = "Gym";
             case "3":
-                amenityType = "Pool";
+                amenityType1 = "Pool";
             case "4":
-                amenityType = "Movie Room";
+                amenityType1 = "Movie Room";
             case "5":
-                amenityType = "Bar & Restaurant";
+                amenityType1 = "Bar & Restaurant";
             case "6":
-                amenityType = "Game Room";
+                amenityType1 = "Game Room";
             default:
                 System.out.println("Invalid input.");
         }
 
         System.out.println("Please enter a time for your reservation (e.g. 18:30:00)");
-        String timeSlot = date + " " + scan.nextLine();
+        String timeSlot = date1 + " " + scan.nextLine();
 
         String query = "SELECT * FROM Amenity WHERE location = ? AND amenityType = ? LIMIT 1";
 
         // Find first available room matching the required type
         try (PreparedStatement pstmt = c.prepareStatement(query)) {
-            pstmt.setString(1, location);
-            pstmt.setString(2, amenityType);
+            pstmt.setString(1, location1);
+            pstmt.setString(2, amenityType1);
 
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 // Retrieve room details from the ResultSet
-                String amenityName = rs.getString("amenityName");
-                int floorNumber = rs.getInt("floorNumber");
+                String amenityName1 = rs.getString("amenityName");
+                int floorNumber1 = rs.getInt("floorNumber");
             } else {
-                System.out.println("This amenity is unavailable in " + location + ".");
+                System.out.println("This amenity is unavailable in " + location1 + ".");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        String addToSchedule = "INSERT INTO Schedule" + " (rid, location, timeSlot, floorNumber, amenityName)" + " VALUES (rid, location, timeslot, floorNumber, amenityName)";
+        String addToSchedule = "INSERT INTO Schedule" + " (rid, location, timeSlot, floorNumber, amenityName)" + " VALUES (rid1, location1, timeslot1, floorNumber1, amenityName1)";
         System.out.println(addToSchedule);
 
         try (PreparedStatement pstmt = c.prepareStatement(addToSchedule)) {
@@ -406,25 +406,25 @@ public class tasks {
 
         System.out.println("Enter a hotel location.\n");
         System.out.println("1) Montreal\n2) Toronto\n3) Vancouver\n4) Ottawa\n5) Halifax\n6) Calgary");
-        String location = scan.nextLine();
-        switch (location) {
+        String location1 = scan.nextLine();
+        switch (location1) {
             case "1":
-                location = "Montreal";
+                location1 = "Montreal";
                 break;
             case "2":
-                location = "Toronto";
+                location1 = "Toronto";
                 break;
             case "3":
-                location = "Vancouver";
+                location1 = "Vancouver";
                 break;
             case "4":
-                location = "Ottawa";
+                location1 = "Ottawa";
                 break;
             case "5":
-                location = "Halifax";
+                location1 = "Halifax";
                 break;
             case "6":
-                location = "Calgary";
+                location1 = "Calgary";
                 break;
             default:
                 System.out.println("Invalid input.");
@@ -432,23 +432,23 @@ public class tasks {
 
         System.out.println("Select a room type.\n");
         System.out.println("1) Single\n2) Double\n3) Suite");
-        String roomType = scan.nextLine();
+        String roomType1 = scan.nextLine();
         int rs = 0;
-        switch (roomType) {
+        switch (roomType1) {
             case "1":
-                roomType = "Single";
+                roomType1 = "Single";
                 break;
             case "2":
-                roomType = "Double";
+                roomType1 = "Double";
                 break;
             case "3":
-                roomType = "Suite";
+                roomType1 = "Suite";
                 break;
             default:
                 System.out.println("Invalid input.");
 
                 String getCountOfAvailRooms = "SELECT COUNT(*) FROM Room r" +
-                        "WHERE (r.location = " + location + " AND r.roomType = " + roomType +
+                        "WHERE (r.location = " + location1 + " AND r.roomType = " + roomType1 +
                         ")";
 
                 try {
