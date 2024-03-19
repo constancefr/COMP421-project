@@ -127,16 +127,20 @@ public class tasks {
             System.out.println("No available " + roomType1 + " room found.");
         }
 
-        String addToReserve = "INSERT INTO Reserve" + " (rid, location, roomNumber)" + " VALUES (" + rid1 + ", " + location1 + ", " + roomNumber1 + ")";
-        System.out.println(addToReserve);
+        String addToReserve = "INSERT INTO Reserve (rid, location, roomNumber) VALUES (?, ?, ?)";
 
         try (PreparedStatement pstmt = c.prepareStatement(addToReserve)) {
+            pstmt.setInt(1, rid1);
+            pstmt.setString(2, location1);
+            pstmt.setInt(3, roomNumber1);
+
             pstmt.executeUpdate();
+            System.out.println("Reservation added successfully.");
+            return 1; // indicate success
         } catch (SQLException e) {
-//          TODO: handle errors??
             e.printStackTrace();
+            return 0; // indicate failure
         }
-        return 0;
     }
 
     public static int findAvailableRoom(Connection c, String location1, String roomType1) {
@@ -196,17 +200,24 @@ public class tasks {
                 System.out.println("Invalid input.");
         }
 
-        String addToEvent = "INSERT INTO Event" + " (location, eventDate, venue, cateredFlag, rid)"
-                + " VALUES (" + location1 + ", " + eventDate1 + ", " + venue1 + ", " + cateredFlag1 + ", " + rid1 + ")";
+        String addToEvent = "INSERT INTO Event (location, eventDate, venue, cateredFlag, rid) + VALUES (?, ?, ?, ?, ?)";
         System.out.println(addToEvent);
 
         try (PreparedStatement pstmt = c.prepareStatement(addToEvent)) {
+            pstmt.setString(1, location1);
+            pstmt.setDate(2, eventDate1);
+            pstmt.setString(3, venue1);
+            pstmt.setBoolean(4, cateredFlag1);
+            pstmt.setInt(5, rid1);
+
             pstmt.executeUpdate();
+            System.out.println("Event booked successfully.");
+            return 1; // success
         } catch (SQLException e) {
 //          TODO: handle errors??
             e.printStackTrace();
+            return 0; // failure
         }
-        return 0;
     }
 
     public static int scheduleAmenity(Connection c, Statement s, Date date1, String location1, int rid1) {
@@ -233,10 +244,10 @@ public class tasks {
         }
 
         System.out.println("Please enter a time for your reservation (e.g. 18:30:00)");
-        String timeSlot1 = date1 + " " + scan.nextLine();
+        String dateTime = date1 + " " + scan.nextLine();
+        Timestamp timeSlot1 = Timestamp.valueOf(dateTime);
 
         String query = "SELECT * FROM Amenity WHERE location = ? AND amenityType = ? LIMIT 1";
-
 
         int floorNumber1 = 0;
         String amenityName1 = "";
@@ -257,18 +268,26 @@ public class tasks {
             e.printStackTrace();
         }
 
-        String addToSchedule = "INSERT INTO Schedule" + " (rid, location, timeSlot, floorNumber, amenityName)"
-                + " VALUES (" + rid1 + ", " + location1 + ", CAST(" + timeSlot1 + " AS DATETIME), " + floorNumber1 + ", " + amenityName1 + ")";
+        String addToSchedule = "INSERT INTO Schedule (rid, location, timeSlot, floorNumber, amenityName) VALUES (?, ?, ?, ?, ?)";
+//        String addToSchedule = "INSERT INTO Schedule" + " (rid, location, timeSlot, floorNumber, amenityName)"
+//                + " VALUES (" + rid1 + ", " + location1 + ", CAST(" + timeSlot1 + " AS DATETIME), " + floorNumber1 + ", " + amenityName1 + ")";
         System.out.println(addToSchedule);
 
         try (PreparedStatement pstmt = c.prepareStatement(addToSchedule)) {
+            pstmt.setInt(1, rid1);
+            pstmt.setString(2, location1);
+            pstmt.setTimestamp(3, timeSlot1);
+            pstmt.setInt(4, floorNumber1);
+            pstmt.setString(5, amenityName1);
+
             pstmt.executeUpdate();
+            System.out.println("Amenity scheduled successfully.");
+            return 1;
         } catch (SQLException e) {
 //          TODO: handle errors??
             e.printStackTrace();
+            return 0;
         }
-
-        return 0;
     }
 
     public static int initializeCustomer(Connection c, Statement s) {
@@ -283,6 +302,7 @@ public class tasks {
                 valid = true;
                 System.out.println("Please enter your Rewards Member number (CID).");
                 userInput = scan.nextLine();
+                // TODO!! Check that CID exists
                 try {
                     CID = Integer.parseInt(userInput);
                 } catch (NumberFormatException e) {
@@ -310,15 +330,6 @@ public class tasks {
     }
 
     public static int createAccount(Connection c, Statement s, boolean isRewards) {
-        //generate cid
-//        String countCustomers = "SELECT COUNT(cid) FROM Customer";
-//        int rs = 0;
-//        try {
-//            rs = s.executeUpdate(countCustomers);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        int cid = rs + 1;
         Scanner scan = new Scanner(System.in);
 
         //get name
@@ -336,12 +347,8 @@ public class tasks {
         //get ccnum
         System.out.print("Input your credit card number: \n");
         String ccnum1 = scan.nextLine();
-//        Integer cc_num = Integer.parseInt(scan.nextLine());
-//        int ccnum = (int) cc_num;
         //get ccexpdate
         System.out.println("Input your credit card expiration date (YYYY-MM-DD):");
-//        String ccexpdate1 = "'" + scan.nextLine() + "'"; // reformatted so it fits DB2's DATE format
-//        System.out.print("Input your credit card expiration date: \n");
         Date ccexpdate1 = Date.valueOf(scan.nextLine());
 
         String username1 = "";
@@ -359,31 +366,27 @@ public class tasks {
         }
 
         //execute SQL statement that inserts this new user into the Customer table and RewardsMember table
-        //Customer: cid, name, email, phone_number, address, ccnum, ccexp
-
-      //  String addToCustomer = "INSERT INTO Customer" + " (name, email, phone_number, address, ccnum, ccexpdate)" + " VALUES (name1, email1, phoneNumber1, address1, ccnum1, ccexpdate1)";
-       // System.out.println(addToCustomer);
-        String addToCustomer = "INSERT INTO Customer" + " (name, email, phone_number, address, ccnum, ccexpdate)" +
-                "VALUES (" + name1 + ", " + phoneNumber1 + ", " + address1 + ", " +
-                ccnum1 + ", " + ccexpdate1 + ")";
+        String addToCustomer = "INSERT INTO Customer (name, email, phone_number, address, ccnum, ccexpdate) VALUES (?, ?, ?, ?, ?)";
+//                "VALUES (" + name1 + ", " + phoneNumber1 + ", " + address1 + ", " + ccnum1 + ", " + ccexpdate1 + ")";
 
         // DB2 GENERATES UNIQUE CID AUTOMATICALLY!!
         int generatedCID = 0;
         try (PreparedStatement pstmt = c.prepareStatement(addToCustomer, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, name1);
+            pstmt.setString(2, email1);
+            pstmt.setString(3, phoneNumber1);
+            pstmt.setString(4, address1);
+            pstmt.setString(5, ccnum1);
+            pstmt.setDate(6, ccexpdate1);
+
             pstmt.executeUpdate();
             ResultSet generatedKey = pstmt.getGeneratedKeys();
             generatedCID = generatedKey.getInt(1);
             System.out.println("New CID generated: " + generatedCID);
+            System.out.println("Account created successfully");
         } catch (SQLException e) {
             e.printStackTrace();
         }
-//        try {
-//            s.executeUpdate(addToCustomer);
-//            System.out.println("DONE");
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-
 
         //RewardsMembers: cid, login, pwd, points
         if (isRewards) {
