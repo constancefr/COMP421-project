@@ -369,7 +369,7 @@ public class tasks {
         }
 
         //execute SQL statement that inserts this new user into the Customer table and RewardsMember table
-        String addToCustomer = "INSERT INTO Customer (name, email, phone_number, address, ccnum, ccexpdate) VALUES (?, ?, ?, ?, ?)";
+        String addToCustomer = "INSERT INTO Customer (name, email, phone_number, address, ccnum, ccexpdate) VALUES (?, ?, ?, ?, ?, ?)";
 
         // DB2 GENERATES UNIQUE CID AUTOMATICALLY!!
         int generatedCID = 0;
@@ -383,8 +383,10 @@ public class tasks {
 
             pstmt.executeUpdate();
             ResultSet generatedKey = pstmt.getGeneratedKeys();
-            generatedCID = generatedKey.getInt(1);
-            System.out.println("New CID generated: " + generatedCID);
+            if (generatedKey.next()) {
+                generatedCID = generatedKey.getInt(1);
+                System.out.println("New CID generated: " + generatedCID);
+            }
             System.out.println("Account created successfully");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -392,10 +394,7 @@ public class tasks {
 
         //RewardsMembers: cid, login, pwd, points
         if (isRewards) {
-            //    String addToRewards = "INSERT INTO RewardsMember" + " (cid, login, pwd, points)" + " VALUES (generatedCID, username1, pwd1, points1)";
-            // System.out.println(addToRewards);
-            String addToRewards = "INSERT INTO RewardsMember " +
-                    "VALUES (?, ?, ?, ?)";
+            String addToRewards = "INSERT INTO RewardsMember (cid, login, pwd, points) VALUES (?, ?, ?, ?)";
             try (PreparedStatement pstmt = c.prepareStatement(addToRewards)) {
                 //generateCID
                 //username1
