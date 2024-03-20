@@ -2,7 +2,7 @@ import java.sql.* ;
 import java.util.Scanner;
 import java.sql.Connection;
 
-class simpleJDBC {
+class theQueenHotel {
     public static void main(String[] args) throws SQLException {
 
         // Registering the driver
@@ -91,7 +91,7 @@ class simpleJDBC {
 
                 case 6: // quit
                     System.out.println("Thank you for staying at The Queen. Your satisfaction is our primary key, " +
-                            "so please rate your experience with us today!");
+                            "so please\nrate your experience with us today!");
                     System.out.println("* | ** | *** | **** | *****\n");
                     String userRating = scan.nextLine();
                     if (userRating.equals("*****")) {

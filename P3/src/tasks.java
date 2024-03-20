@@ -584,7 +584,7 @@ public class tasks {
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
-                return -1; // Error occurred
+                return -1;
             }
         }
         return -1; // Rid not found in any table
