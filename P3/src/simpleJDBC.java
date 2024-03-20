@@ -37,7 +37,7 @@ class simpleJDBC {
         Scanner scan = new Scanner(System.in);
         System.out.println(
                 "\nHello and welcome to The Queen!\nGet ready for a superior hospitality experience where SQL queries\n" +
-                        "are as smooth as our freshly fluffed pillows.\n");
+                        "are as smooth as our freshly fluffed pillows.");
 
         int userInput = 0;
         while (userInput != 6) { // loop until user quits.
@@ -53,10 +53,10 @@ class simpleJDBC {
                     }
                     break;
 
-                case 2: // TODO return something??
+                case 2: // cancel reservation
                     int resultCancel = tasks.cancelRes(con, statement);
                     if (resultCancel == -1) {
-                        System.out.println("An error has occurred while processing your cancellation. Please try again with correct inputs.");
+                        System.out.println("This RID does not correspond to any existing reservations.");
                     } else {
                         System.out.println("Your reservation was cancelled.\n");
                     }
@@ -95,7 +95,7 @@ class simpleJDBC {
                     System.out.println("* | ** | *** | **** | *****\n");
                     String userRating = scan.nextLine();
                     if (userRating.equals("*****")) {
-                        System.out.println("Splendid, we hope to see you soon!\n");
+                        System.out.println("Splendid, we hope to see you again soon!\n");
                     } else {
                         System.out.println("Bye!\n");
                     }
@@ -111,7 +111,7 @@ class simpleJDBC {
     public static int menuPrompt() {
         Scanner scan = new Scanner(System.in);
         int userInput = 0;
-        String menu = "Please select an option:\n"
+        String menu = "\nPlease select an option:\n"
                 + "1) Make a reservation for a room, event or amenity\n"
                 + "2) Cancel a reservation\n"
                 + "3) Check the availability of a certain room type\n"

@@ -569,96 +569,25 @@ public class tasks {
     }
 
     public static int cancelRes (Connection c, Statement s){
-        //Scanner to get rid from the user
         Scanner sc = new Scanner(System.in);
         System.out.println("Please input the rid of the reservation you would like to cancel: ");
-        Integer i = Integer.parseInt(sc.nextLine());
-        int rid1 = (int) i;
+        int rid1 = Integer.parseInt(sc.nextLine());
 
-        //delete rid from reservation table
-        String deleteRes = "DELETE FROM Reservation" +
-                "WHERE rid = ?";
-        try (PreparedStatement pstmt = c.prepareStatement(deleteRes)) {
-            pstmt.setInt(1, rid1);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return -1;
-        }
-
-        int whichRelation = 0;
-        //scan tables to see if it is a room, amenity, or event
-        String roomDeleteQuery = "SELECT * FROM ? WHERE rid = ?";
-        try (PreparedStatement pstmt1 = c.prepareStatement(roomDeleteQuery)) {
-            pstmt1.setString(1, "Reserve");
-            pstmt1.setInt(2, rid1);
-            ResultSet rs = pstmt1.executeQuery();
-            if (rs.next()) {
-                whichRelation = 1;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return -1;
-        }
-        String amenityDeleteQuery = "SELECT * FROM ? WHERE rid = ?";
-        try (PreparedStatement pstmt2 = c.prepareStatement(amenityDeleteQuery)) {
-            pstmt2.setString(1, "Schedule");
-            pstmt2.setInt(2, rid1);
-            ResultSet rs = pstmt2.executeQuery();
-            if (rs.next()) {
-                whichRelation = 2;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return -1;
-        }
-        String eventDeleteQuery = "SELECT * FROM ? WHERE rid = ?";
-        try (PreparedStatement pstmt3 = c.prepareStatement(eventDeleteQuery)) {
-            pstmt3.setString(1, "Event");
-            pstmt3.setInt(2, rid1);
-            ResultSet rs = pstmt3.executeQuery();
-            if (rs.next()) {
-                whichRelation = 3;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return -1;
-        }
-
-        String deleteBooking = "DELETE FROM ? WHERE rid = ?";
-        switch (whichRelation) {
-            case 1:
-                try (PreparedStatement delstmt1 = c.prepareStatement(deleteBooking)) {
-                    delstmt1.setString(1, "Reserve");
-                    delstmt1.setInt(2, rid1);
-                    delstmt1.executeUpdate();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+        String[] tablesToDeleteFrom = {"Reservation", "Reserve", "Schedule", "Event"};
+        for (String table : tablesToDeleteFrom) {
+            String deleteQuery = "DELETE FROM " + table + " WHERE rid = ?";
+            try (PreparedStatement pstmt = c.prepareStatement(deleteQuery)) {
+                pstmt.setInt(1, rid1);
+                int rowsAffected = pstmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    return 0; // Successfully deleted from at least one table
                 }
-                break;
-            case 2:
-                try (PreparedStatement delstmt2 = c.prepareStatement(deleteBooking)) {
-                    delstmt2.setString(1, "Schedule");
-                    delstmt2.setInt(2, rid1);
-                    delstmt2.executeUpdate();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case 3:
-                try (PreparedStatement delstmt3 = c.prepareStatement(deleteBooking)) {
-                    delstmt3.setString(1, "Event");
-                    delstmt3.setInt(2, rid1);
-                    delstmt3.executeUpdate();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                break;
-            default:
-                System.out.println("Invalid input");
-                break;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return -1; // Error occurred
+            }
         }
-        return 0;
+        return -1; // Rid not found in any table
     }
 
     public static int getSupport (Connection c, Statement s){
