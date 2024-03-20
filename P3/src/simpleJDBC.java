@@ -96,7 +96,7 @@ class simpleJDBC {
                 + "2) Cancel a reservation\n"
                 + "3) Check the availability of a certain room type\n"
                 + "4) Find a Front Desk employee at your desired location\n"
-                + "5) Create a rewards member\n"
+                + "5) Create a rewards account\n"
                 + "6) Quit\n";
         System.out.println(menu);
         userInput = Integer.parseInt(scan.nextLine());
