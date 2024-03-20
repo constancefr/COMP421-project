@@ -509,9 +509,10 @@ public class tasks {
 
         int whichRelation = 0;
         //scan tables to see if it is a room, amenity, or event
-        String roomDeleteQuery = "SELECT * FROM Reserve WHERE rid = ?";
+        String roomDeleteQuery = "SELECT * FROM ? WHERE rid = ?";
         try (PreparedStatement pstmt1 = c.prepareStatement(roomDeleteQuery)) {
-            pstmt1.setInt(1, rid1);
+            pstmt1.setString(1, "Reserve");
+            pstmt1.setInt(2, rid1);
             ResultSet rs = pstmt1.executeQuery();
             if (rs.next()) {
                 whichRelation = 1;
@@ -519,9 +520,10 @@ public class tasks {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        String amenityDeleteQuery = "SELECT * FROM Schedule WHERE rid = ?";
+        String amenityDeleteQuery = "SELECT * FROM ? WHERE rid = ?";
         try (PreparedStatement pstmt2 = c.prepareStatement(amenityDeleteQuery)) {
-            pstmt2.setInt(1, rid1);
+            pstmt2.setString(1, "Schedule");
+            pstmt2.setInt(2, rid1);
             ResultSet rs = pstmt2.executeQuery();
             if (rs.next()) {
                 whichRelation = 2;
@@ -529,9 +531,10 @@ public class tasks {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        String eventDeleteQuery = "SELECT * FROM Event WHERE rid = ?";
+        String eventDeleteQuery = "SELECT * FROM ? WHERE rid = ?";
         try (PreparedStatement pstmt3 = c.prepareStatement(eventDeleteQuery)) {
-            pstmt3.setInt(1, rid1);
+            pstmt3.setString(1, "Event");
+            pstmt3.setInt(2, rid1);
             ResultSet rs = pstmt3.executeQuery();
             if (rs.next()) {
                 whichRelation = 3;
